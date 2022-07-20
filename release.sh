@@ -18,9 +18,9 @@ cd artifacts
 
 set +e
 
-OWNER="${GITHUB_REPOSITORY_OWNER:-"VSCodium"}"
+OWNER="${GITHUB_REPOSITORY_OWNER:-"imaegoo"}"
 REPO_NAME="${GITHUB_REPOSITORY:(${#OWNER}+1)}"
-REPOSITORY="${REPO_NAME:-"vscodium"}"
+REPOSITORY="${REPO_NAME:-"elephant"}"
 
 # git workaround
 git config --global --add safe.directory "*"

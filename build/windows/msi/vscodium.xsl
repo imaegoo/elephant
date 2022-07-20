@@ -11,17 +11,17 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:key name="vId1ToReplace" match="wi:Component[wi:File[contains(@Source,'VSCodium.exe')]]" use="@Id"/>
+  <xsl:key name="vId1ToReplace" match="wi:Component[wi:File[contains(@Source,'Elephant.exe')]]" use="@Id"/>
   <xsl:template match="node()[key('vId1ToReplace', @Id)]">
     <xsl:copy>
-      <xsl:attribute name="Id">VSCODIUM.EXE</xsl:attribute>
+      <xsl:attribute name="Id">ELEPHANT.EXE</xsl:attribute>
       <xsl:copy-of select="@*[name()!='Id']"/>
       <xsl:apply-templates />
     </xsl:copy>
   </xsl:template>
-  <xsl:template match="wi:Component/wi:File[contains(@Source,'VSCodium.exe')]">
+  <xsl:template match="wi:Component/wi:File[contains(@Source,'Elephant.exe')]">
      <xsl:copy>
-        <xsl:attribute name="Id">VSCODIUM.EXE</xsl:attribute>
+        <xsl:attribute name="Id">ELEPHANT.EXE</xsl:attribute>
         <xsl:copy-of select="@*[name()!='Id']"/>
         <xsl:apply-templates />
      </xsl:copy>

@@ -3,9 +3,9 @@
 #
 # On a Debian/Ubuntu system:
 # wget -c "https://github.com/AppImage/pkg2appimage/raw/master/pkg2appimage"
-# bash -ex pkg2appimage VSCodium
+# bash -ex pkg2appimage Elephant
 
-app: VSCodium
+app: Elephant
 
 ingredients:
   packages:
@@ -22,13 +22,13 @@ ingredients:
 script:
   - sed -i -e 's|/usr/share/pixmaps/||g' usr/share/applications/codium.desktop
   - cp usr/share/applications/codium.desktop .
-  - cp usr/share/pixmaps/vscodium.png .
-  - /usr/bin/convert vscodium.png -resize 512x512 usr/share/icons/hicolor/512x512/apps/vscodium.png
-  - /usr/bin/convert vscodium.png -resize 256x256 usr/share/icons/hicolor/256x256/apps/vscodium.png
-  - /usr/bin/convert vscodium.png -resize 128x128 usr/share/icons/hicolor/128x128/apps/vscodium.png
-  - /usr/bin/convert vscodium.png -resize 64x64 usr/share/icons/hicolor/64x64/apps/vscodium.png
-  - /usr/bin/convert vscodium.png -resize 48x48 usr/share/icons/hicolor/48x48/apps/vscodium.png
-  - /usr/bin/convert vscodium.png -resize 32x32 usr/share/icons/hicolor/32x32/apps/vscodium.png
+  - cp usr/share/pixmaps/elephant.png .
+  - /usr/bin/convert elephant.png -resize 512x512 usr/share/icons/hicolor/512x512/apps/elephant.png
+  - /usr/bin/convert elephant.png -resize 256x256 usr/share/icons/hicolor/256x256/apps/elephant.png
+  - /usr/bin/convert elephant.png -resize 128x128 usr/share/icons/hicolor/128x128/apps/elephant.png
+  - /usr/bin/convert elephant.png -resize 64x64 usr/share/icons/hicolor/64x64/apps/elephant.png
+  - /usr/bin/convert elephant.png -resize 48x48 usr/share/icons/hicolor/48x48/apps/elephant.png
+  - /usr/bin/convert elephant.png -resize 32x32 usr/share/icons/hicolor/32x32/apps/elephant.png
   - ( cd usr/bin/ ; ln -s ../share/codium/codium  . )
   - rm -rf usr/lib/x86_64-linux-gnu
   - rm -f lib/x86_64-linux-gnu/libglib*

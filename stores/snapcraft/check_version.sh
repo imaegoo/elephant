@@ -20,7 +20,7 @@ else
   SNAP_VERSION=$(snapcraft list-revisions codium | grep -F "stable*" | grep "${ARCHITECTURE}" | tr -s ' ' | cut -d ' ' -f 4)
   echo "Snap version: ${SNAP_VERSION}"
 
-  wget --quiet https://api.github.com/repos/VSCodium/vscodium/releases -O gh_latest.json
+  wget --quiet https://api.github.com/repos/imaegoo/elephant/releases -O gh_latest.json
   GH_VERSION=$(jq -r 'sort_by(.tag_name)|last.tag_name' gh_latest.json)
   echo "GH version: ${GH_VERSION}"
 

@@ -60,7 +60,7 @@ twitterUrl='setpath(["twitterUrl"]; "https://go.microsoft.com/fwlink/?LinkID=533
 requestFeatureUrl='setpath(["requestFeatureUrl"]; "https://go.microsoft.com/fwlink/?LinkID=533482")'
 documentationUrl='setpath(["documentationUrl"]; "https://go.microsoft.com/fwlink/?LinkID=533484#vscode")'
 introductoryVideosUrl='setpath(["introductoryVideosUrl"]; "https://go.microsoft.com/fwlink/?linkid=832146")'
-updateUrl='setpath(["updateUrl"]; "https://vscodium.now.sh")'
+updateUrl='setpath(["updateUrl"]; "https://elephant.now.sh")'
 releaseNotesUrl='setpath(["releaseNotesUrl"]; "https://go.microsoft.com/fwlink/?LinkID=533483#vscode")'
 keyboardShortcutsUrlMac='setpath(["keyboardShortcutsUrlMac"]; "https://go.microsoft.com/fwlink/?linkid=832143")'
 keyboardShortcutsUrlLinux='setpath(["keyboardShortcutsUrlLinux"]; "https://go.microsoft.com/fwlink/?linkid=832144")'
@@ -68,22 +68,22 @@ keyboardShortcutsUrlWin='setpath(["keyboardShortcutsUrlWin"]; "https://go.micros
 quality='setpath(["quality"]; "stable")'
 extensionsGallery='setpath(["extensionsGallery"]; {"serviceUrl": "https://open-vsx.org/vscode/gallery", "itemUrl": "https://open-vsx.org/vscode/item"})'
 linkProtectionTrustedDomains='setpath(["linkProtectionTrustedDomains"]; ["https://open-vsx.org"])'
-nameShort='setpath(["nameShort"]; "VSCodium")'
-nameLong='setpath(["nameLong"]; "VSCodium")'
-linuxIconName='setpath(["linuxIconName"]; "vscodium")'
+nameShort='setpath(["nameShort"]; "Elephant")'
+nameLong='setpath(["nameLong"]; "Elephant")'
+linuxIconName='setpath(["linuxIconName"]; "elephant")'
 applicationName='setpath(["applicationName"]; "codium")'
-win32MutexName='setpath(["win32MutexName"]; "vscodium")'
-win32DirName='setpath(["win32DirName"]; "VSCodium")'
-win32NameVersion='setpath(["win32NameVersion"]; "VSCodium")'
-win32RegValueName='setpath(["win32RegValueName"]; "VSCodium")'
-win32AppUserModelId='setpath(["win32AppUserModelId"]; "Microsoft.VSCodium")'
-win32ShellNameShort='setpath(["win32ShellNameShort"]; "VSCodium")'
+win32MutexName='setpath(["win32MutexName"]; "elephant")'
+win32DirName='setpath(["win32DirName"]; "Elephant")'
+win32NameVersion='setpath(["win32NameVersion"]; "Elephant")'
+win32RegValueName='setpath(["win32RegValueName"]; "Elephant")'
+win32AppUserModelId='setpath(["win32AppUserModelId"]; "Microsoft.Elephant")'
+win32ShellNameShort='setpath(["win32ShellNameShort"]; "Elephant")'
 win32x64UserAppId='setpath (["win32x64UserAppId"]; "{{2E1F05D1-C245-4562-81EE-28188DB6FD17}")'
-urlProtocol='setpath(["urlProtocol"]; "vscodium")'
+urlProtocol='setpath(["urlProtocol"]; "elephant")'
 serverApplicationName='setpath(["serverApplicationName"]; "codium-server")'
-serverDataFolderName='setpath(["serverDataFolderName"]; ".vscodium-server")'
-reportIssueUrl='setpath(["reportIssueUrl"]; "https://github.com/VSCodium/vscodium/issues/new")'
-licenseUrl='setpath(["licenseUrl"]; "https://github.com/VSCodium/vscodium/blob/master/LICENSE")'
+serverDataFolderName='setpath(["serverDataFolderName"]; ".elephant-server")'
+reportIssueUrl='setpath(["reportIssueUrl"]; "https://github.com/imaegoo/elephant/issues/new")'
+licenseUrl='setpath(["licenseUrl"]; "https://github.com/imaegoo/elephant/blob/master/LICENSE")'
 
 product_json_changes="${checksumFailMoreInfoUrl} | ${tipsAndTricksUrl} | ${twitterUrl} | ${requestFeatureUrl} | ${documentationUrl} | ${introductoryVideosUrl} | ${updateUrl} | ${releaseNotesUrl} | ${keyboardShortcutsUrlMac} | ${keyboardShortcutsUrlLinux} | ${keyboardShortcutsUrlWin} | ${quality} | ${extensionsGallery} | ${linkProtectionTrustedDomains} | ${nameShort} | ${nameLong} | ${linuxIconName} | ${applicationName} | ${win32MutexName} | ${win32DirName} | ${win32NameVersion} | ${win32RegValueName} | ${win32AppUserModelId} | ${win32ShellNameShort} | ${win32x64UserAppId} | ${urlProtocol} | ${serverApplicationName} | ${serverDataFolderName} | ${reportIssueUrl} | ${licenseUrl}"
 cat product.json.bak | jq "${product_json_changes}" > product.json.tmp
@@ -98,32 +98,32 @@ cat product.json
 if [[ "${OS_NAME}" == "linux" ]]; then
   # microsoft adds their apt repo to sources
   # unless the app name is code-oss
-  # as we are renaming the application to vscodium
+  # as we are renaming the application to elephant
   # we need to edit a line in the post install template
   sed -i "s/code-oss/codium/" resources/linux/debian/postinst.template
 
   # fix the packages metadata
   # code.appdata.xml
-  sed -i 's|Visual Studio Code|VSCodium|g' resources/linux/code.appdata.xml
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/code.appdata.xml
-  sed -i 's|https://code.visualstudio.com/home/home-screenshot-linux-lg.png|https://vscodium.com/img/vscodium.png|' resources/linux/code.appdata.xml
-  sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/code.appdata.xml
+  sed -i 's|Visual Studio Code|Elephant|g' resources/linux/code.appdata.xml
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/code.appdata.xml
+  sed -i 's|https://code.visualstudio.com/home/home-screenshot-linux-lg.png|https://elephant.com/img/elephant.png|' resources/linux/code.appdata.xml
+  sed -i 's|https://code.visualstudio.com|https://elephant.com|' resources/linux/code.appdata.xml
 
   # control.template
-  sed -i 's|Microsoft Corporation <vscode-linux@microsoft.com>|VSCodium Team https://github.com/VSCodium/vscodium/graphs/contributors|'  resources/linux/debian/control.template
-  sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/debian/control.template
-  sed -i 's|Visual Studio Code|VSCodium|g' resources/linux/debian/control.template
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/debian/control.template
+  sed -i 's|Microsoft Corporation <vscode-linux@microsoft.com>|Elephant Team https://github.com/imaegoo/elephant/graphs/contributors|'  resources/linux/debian/control.template
+  sed -i 's|https://code.visualstudio.com|https://elephant.com|' resources/linux/debian/control.template
+  sed -i 's|Visual Studio Code|Elephant|g' resources/linux/debian/control.template
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/debian/control.template
 
   # code.spec.template
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/rpm/code.spec.template
-  sed -i 's|Microsoft Corporation|VSCodium Team|' resources/linux/rpm/code.spec.template
-  sed -i 's|Visual Studio Code Team <vscode-linux@microsoft.com>|VSCodium Team https://github.com/VSCodium/vscodium/graphs/contributors|' resources/linux/rpm/code.spec.template
-  sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/rpm/code.spec.template
-  sed -i 's|Visual Studio Code|VSCodium|' resources/linux/rpm/code.spec.template
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/rpm/code.spec.template
+  sed -i 's|Microsoft Corporation|Elephant Team|' resources/linux/rpm/code.spec.template
+  sed -i 's|Visual Studio Code Team <vscode-linux@microsoft.com>|Elephant Team https://github.com/imaegoo/elephant/graphs/contributors|' resources/linux/rpm/code.spec.template
+  sed -i 's|https://code.visualstudio.com|https://elephant.com|' resources/linux/rpm/code.spec.template
+  sed -i 's|Visual Studio Code|Elephant|' resources/linux/rpm/code.spec.template
 
   # snapcraft.yaml
-  sed -i 's|Visual Studio Code|VSCodium|'  resources/linux/rpm/code.spec.template
+  sed -i 's|Visual Studio Code|Elephant|'  resources/linux/rpm/code.spec.template
 fi
 
 cd ..

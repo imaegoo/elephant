@@ -23,7 +23,7 @@ fi
 #  }
 
 # `url` is URL_BASE + filename of asset e.g.
-#    darwin: https://github.com/VSCodium/vscodium/releases/download/${MS_TAG}/VSCodium-darwin-${MS_TAG}.zip
+#    darwin: https://github.com/imaegoo/elephant/releases/download/${MS_TAG}/Elephant-darwin-${MS_TAG}.zip
 # `name` is $MS_TAG
 # `version` is $MS_COMMIT
 # `productVersion` is $MS_TAG
@@ -31,7 +31,7 @@ fi
 # `timestamp` is $(node -e 'console.log(Date.now())')
 # `sha256hash` in <filename>.sha256
 
-URL_BASE="https://github.com/VSCodium/vscodium/releases/download/${MS_TAG}"
+URL_BASE="https://github.com/imaegoo/elephant/releases/download/${MS_TAG}"
 
 # to make testing on forks easier
 VERSIONS_REPO="${GITHUB_USERNAME}/versions"
@@ -94,40 +94,40 @@ updateLatestVersion() {
 # thank you https://www.vinaygopinath.me/blog/tech/commit-to-master-branch-on-github-using-travis-ci/
 git clone "https://github.com/${VERSIONS_REPO}.git"
 cd versions
-git config user.email "vscodium-ci@not-real.com"
-git config user.name "VSCodium CI"
+git config user.email "hellp@imaegoo.com"
+git config user.name "iMaeGoo CI"
 git remote rm origin
 git remote add origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${VERSIONS_REPO}.git" > /dev/null 2>&1
 cd ..
 
 if [[ "${OS_NAME}" == "osx" ]]; then
-  ASSET_NAME=VSCodium-darwin-${VSCODE_ARCH}-${MS_TAG}.zip
+  ASSET_NAME=Elephant-darwin-${VSCODE_ARCH}-${MS_TAG}.zip
   VERSION_PATH="darwin/${VSCODE_ARCH}"
   updateLatestVersion
 elif [[ "${OS_NAME}" == "windows" ]]; then
   # system installer
-  ASSET_NAME=VSCodiumSetup-${VSCODE_ARCH}-${MS_TAG}.exe
+  ASSET_NAME=ElephantSetup-${VSCODE_ARCH}-${MS_TAG}.exe
   VERSION_PATH="win32/${VSCODE_ARCH}/system"
   updateLatestVersion
 
   # user installer
-  ASSET_NAME=VSCodiumUserSetup-${VSCODE_ARCH}-${MS_TAG}.exe
+  ASSET_NAME=ElephantUserSetup-${VSCODE_ARCH}-${MS_TAG}.exe
   VERSION_PATH="win32/${VSCODE_ARCH}/user"
   updateLatestVersion
 
   # windows archive
-  ASSET_NAME=VSCodium-win32-${VSCODE_ARCH}-${MS_TAG}.zip
+  ASSET_NAME=Elephant-win32-${VSCODE_ARCH}-${MS_TAG}.zip
   VERSION_PATH="win32/${VSCODE_ARCH}/archive"
   updateLatestVersion
 
   if [[ "${VSCODE_ARCH}" == "ia32" || "${VSCODE_ARCH}" == "x64" ]]; then
     # msi
-    ASSET_NAME=VSCodium-${VSCODE_ARCH}-${MS_TAG}.msi
+    ASSET_NAME=Elephant-${VSCODE_ARCH}-${MS_TAG}.msi
     VERSION_PATH="win32/${VSCODE_ARCH}/msi"
     updateLatestVersion
 
     # updates-disabled msi
-    ASSET_NAME=VSCodium-${VSCODE_ARCH}-updates-disabled-${MS_TAG}.msi
+    ASSET_NAME=Elephant-${VSCODE_ARCH}-updates-disabled-${MS_TAG}.msi
     VERSION_PATH="win32/${VSCODE_ARCH}/msi-updates-disabled"
     updateLatestVersion
   fi
@@ -135,7 +135,7 @@ else # linux
   # update service links to tar.gz file
   # see https://update.code.visualstudio.com/api/update/linux-x64/stable/VERSION
   # as examples
-  ASSET_NAME=VSCodium-linux-${VSCODE_ARCH}-${MS_TAG}.tar.gz
+  ASSET_NAME=Elephant-linux-${VSCODE_ARCH}-${MS_TAG}.tar.gz
   VERSION_PATH="linux/${VSCODE_ARCH}"
   updateLatestVersion
 fi
