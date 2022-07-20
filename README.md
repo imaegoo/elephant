@@ -7,7 +7,6 @@ Includes:
   - `icons/code_64.png`
   - `icons/code_darwin.png`
   - `icons/codium_only.svg`
-  - `icons/corner_512.png`
   - `src/resources/linux/code.png`
   - `src/resources/win32/code.ico`
   - `src/resources/win32/code_70x70.png`

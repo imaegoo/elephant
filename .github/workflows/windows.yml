@@ -2,10 +2,7 @@ name: windows_build
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * *'
   push:
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -47,7 +44,7 @@ jobs:
       - name: Check PR or cron
         run: ./check_cron_or_pr.sh
 
-      - name: Check existing VSCodium tags/releases
+      - name: Check existing Elephant tags/releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./check_tags.sh
