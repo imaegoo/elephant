@@ -17,11 +17,11 @@ ingredients:
   script:
     - pwd
     - cp ../../../../vscode/.build/linux/deb/amd64/deb/*.deb .
-    - ls codium_*.deb | cut -d _ -f 2 > VERSION
+    - ls elephant_*.deb | cut -d _ -f 2 > VERSION
 
 script:
-  - sed -i -e 's|/usr/share/pixmaps/||g' usr/share/applications/codium.desktop
-  - cp usr/share/applications/codium.desktop .
+  - sed -i -e 's|/usr/share/pixmaps/||g' usr/share/applications/elephant.desktop
+  - cp usr/share/applications/elephant.desktop .
   - cp usr/share/pixmaps/elephant.png .
   - /usr/bin/convert elephant.png -resize 512x512 usr/share/icons/hicolor/512x512/apps/elephant.png
   - /usr/bin/convert elephant.png -resize 256x256 usr/share/icons/hicolor/256x256/apps/elephant.png
@@ -29,7 +29,7 @@ script:
   - /usr/bin/convert elephant.png -resize 64x64 usr/share/icons/hicolor/64x64/apps/elephant.png
   - /usr/bin/convert elephant.png -resize 48x48 usr/share/icons/hicolor/48x48/apps/elephant.png
   - /usr/bin/convert elephant.png -resize 32x32 usr/share/icons/hicolor/32x32/apps/elephant.png
-  - ( cd usr/bin/ ; ln -s ../share/codium/codium  . )
+  - ( cd usr/bin/ ; ln -s ../share/elephant/elephant  . )
   - rm -rf usr/lib/x86_64-linux-gnu
   - rm -f lib/x86_64-linux-gnu/libglib*
   - cat > AppRun <<\EOF

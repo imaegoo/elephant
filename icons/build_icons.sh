@@ -79,68 +79,68 @@ build_win32() {
 
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp" ]; then
     convert -size 164x314 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp"
-    composite -size 126x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp"
+    composite -size 126x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-100.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp" ]; then
     convert -size 192x386 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp"
-    composite -size 147x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp"
+    composite -size 147x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-125.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp" ]; then
     convert -size 246x459 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp"
-    composite -size 190x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp"
+    composite -size 190x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-150.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp" ]; then
     convert -size 273x556 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp"
-    composite -size 211x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp"
+    composite -size 211x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-175.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp" ]; then
     convert -size 328x604 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp"
-    composite -size 255x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp"
+    composite -size 255x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-200.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp" ]; then
     convert -size 355x700 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp"
-    composite -size 273x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp"
+    composite -size 273x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-225.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp" ]; then
     convert -size 410x797 xc:white "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp"
-    composite -size 317x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp"
+    composite -size 317x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp" "${SRC_PREFIX}src/resources/win32/inno-big-250.bmp"
   fi
 
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp" ]; then
     convert -size 55x55 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp"
-    composite -size 44x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp"
+    composite -size 44x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-100.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp" ]; then
     convert -size 64x68 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp"
-    composite -size 52x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp"
+    composite -size 52x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-125.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp" ]; then
     convert -size 83x80 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp"
-    composite -size 63x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp"
+    composite -size 63x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-150.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp" ]; then
     convert -size 92x97 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp"
-    composite -size 76x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp"
+    composite -size 76x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-175.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp" ]; then
     convert -size 110x106 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp"
-    composite -size 86x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp"
+    composite -size 86x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-200.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp" ]; then
     convert -size 119x123 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp"
-    composite -size 103x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp"
+    composite -size 103x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-225.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp" ]; then
     convert -size 138x140 xc:white "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp"
-    composite -size 116x -gravity center icons/codium_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp"
+    composite -size 116x -gravity center icons/elephant_only.svg "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp" "${SRC_PREFIX}src/resources/win32/inno-small-250.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp" ]; then
     convert -size 493x58 xc:white "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp"
-    composite -geometry +438+6 \( icons/codium_only.svg -resize 50x50 \) "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp" "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp"
+    composite -geometry +438+6 \( icons/elephant_only.svg -resize 50x50 \) "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp" "${SRC_PREFIX}build/windows/msi/resources/wix-banner.bmp"
   fi
   if [ ! -f "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp" ]; then
     convert -size 493x312 xc:white "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp"
-    composite -geometry +22+152 \( icons/codium_only.svg -resize 120x90 \) "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp" "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp"
+    composite -geometry +22+152 \( icons/elephant_only.svg -resize 120x90 \) "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp" "${SRC_PREFIX}build/windows/msi/resources/wix-dialog.bmp"
   fi
 }
 

@@ -71,7 +71,7 @@ linkProtectionTrustedDomains='setpath(["linkProtectionTrustedDomains"]; ["https:
 nameShort='setpath(["nameShort"]; "Elephant")'
 nameLong='setpath(["nameLong"]; "Elephant")'
 linuxIconName='setpath(["linuxIconName"]; "elephant")'
-applicationName='setpath(["applicationName"]; "codium")'
+applicationName='setpath(["applicationName"]; "elephant")'
 win32MutexName='setpath(["win32MutexName"]; "elephant")'
 win32DirName='setpath(["win32DirName"]; "Elephant")'
 win32NameVersion='setpath(["win32NameVersion"]; "Elephant")'
@@ -80,7 +80,7 @@ win32AppUserModelId='setpath(["win32AppUserModelId"]; "Microsoft.Elephant")'
 win32ShellNameShort='setpath(["win32ShellNameShort"]; "Elephant")'
 win32x64UserAppId='setpath (["win32x64UserAppId"]; "{{2E1F05D1-C245-4562-81EE-28188DB6FD17}")'
 urlProtocol='setpath(["urlProtocol"]; "elephant")'
-serverApplicationName='setpath(["serverApplicationName"]; "codium-server")'
+serverApplicationName='setpath(["serverApplicationName"]; "elephant-server")'
 serverDataFolderName='setpath(["serverDataFolderName"]; ".elephant-server")'
 reportIssueUrl='setpath(["reportIssueUrl"]; "https://github.com/imaegoo/elephant/issues/new")'
 licenseUrl='setpath(["licenseUrl"]; "https://github.com/imaegoo/elephant/blob/master/LICENSE")'
@@ -100,7 +100,7 @@ if [[ "${OS_NAME}" == "linux" ]]; then
   # unless the app name is code-oss
   # as we are renaming the application to elephant
   # we need to edit a line in the post install template
-  sed -i "s/code-oss/codium/" resources/linux/debian/postinst.template
+  sed -i "s/code-oss/elephant/" resources/linux/debian/postinst.template
 
   # fix the packages metadata
   # code.appdata.xml

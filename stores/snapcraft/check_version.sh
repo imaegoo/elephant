@@ -9,7 +9,7 @@ if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
 elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
 	echo "It's a Push"
 
-	export SHOULD_DEPLOY="no"
+	export SHOULD_DEPLOY="yes"
 else
 	echo "It's a cron"
 
@@ -17,7 +17,7 @@ else
 
   echo "Architecture: ${ARCHITECTURE}"
 
-  SNAP_VERSION=$(snapcraft list-revisions codium | grep -F "stable*" | grep "${ARCHITECTURE}" | tr -s ' ' | cut -d ' ' -f 4)
+  SNAP_VERSION=$(snapcraft list-revisions elephant | grep -F "stable*" | grep "${ARCHITECTURE}" | tr -s ' ' | cut -d ' ' -f 4)
   echo "Snap version: ${SNAP_VERSION}"
 
   wget --quiet https://api.github.com/repos/imaegoo/elephant/releases -O gh_latest.json
@@ -32,7 +32,7 @@ else
 	  export SHOULD_DEPLOY="yes"
 
     snap version
-    snap info codium
+    snap info elephant
   fi
 fi
 

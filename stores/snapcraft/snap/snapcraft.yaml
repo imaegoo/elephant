@@ -1,5 +1,5 @@
-name: codium
-adopt-info: codium
+name: elephant
+adopt-info: elephant
 summary: Code editing. Redefined.
 description: |
   Binary releases of Code without branding/telemetry/licensing
@@ -13,7 +13,7 @@ compression: lzo
 #   - build-on: arm64
 
 parts:
-  codium:
+  elephant:
     plugin: nil
     override-build: |
       set -eu
@@ -32,9 +32,9 @@ parts:
       # Set version
       snapcraftctl set-version "$VERSION"
       # Correct path to icon.
-      sed -i 's|Icon=elephant|Icon=${SNAP}/usr/share/pixmaps/elephant.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium.desktop
-      sed -i 's|Exec=/usr/share/codium/codium|Exec=codium|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium.desktop
-      sed -i 's|Icon=elephant|Icon=/usr/share/pixmaps/elephant.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-url-handler.desktop
+      sed -i 's|Icon=elephant|Icon=${SNAP}/usr/share/pixmaps/elephant.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/elephant.desktop
+      sed -i 's|Exec=/usr/share/elephant/elephant|Exec=elephant|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/elephant.desktop
+      sed -i 's|Icon=elephant|Icon=/usr/share/pixmaps/elephant.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/elephant-url-handler.desktop
     build-packages:
       - wget
       - jq
@@ -67,25 +67,25 @@ parts:
       - -usr/share/icons
       - -usr/share/lintian
       - -usr/share/man
-      - -usr/share/codium/chrome-sandbox
+      - -usr/share/elephant/chrome-sandbox
 
   electron-launch:
     after:
-      - codium
+      - elephant
     plugin: dump
     source: snap/local
 
 apps:
-  codium:
-    command: electron-launch $SNAP/usr/share/codium/bin/codium --no-sandbox
-    desktop: usr/share/applications/codium.desktop
+  elephant:
+    command: electron-launch $SNAP/usr/share/elephant/bin/elephant --no-sandbox
+    desktop: usr/share/applications/elephant.desktop
     environment:
       DISABLE_WAYLAND: 1
       GSETTINGS_SCHEMA_DIR: $SNAP/usr/share/glib-2.0/schemas
 
   url-handler:
-    command: electron-launch $SNAP/usr/share/codium/bin/codium --open-url --no-sandbox
-    desktop: usr/share/applications/codium-url-handler.desktop
+    command: electron-launch $SNAP/usr/share/elephant/bin/elephant --open-url --no-sandbox
+    desktop: usr/share/applications/elephant-url-handler.desktop
     environment:
       DISABLE_WAYLAND: 1
       GSETTINGS_SCHEMA_DIR: $SNAP/usr/share/glib-2.0/schemas

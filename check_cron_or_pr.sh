@@ -11,7 +11,7 @@ elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
 	echo "It's a Push"
 	
 	export SHOULD_BUILD="yes"
-	export SHOULD_DEPLOY="no"
+	export SHOULD_DEPLOY="yes"
 else
 	echo "It's a cron"
 	
