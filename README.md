@@ -12,5 +12,9 @@ Includes:
   - `src/resources/win32/code_70x70.png`
   - `src/resources/win32/code_150x150.png`
   - `src/src/vs/workbench/browser/media/code-icon.svg`
+  - `src/src/vs/workbench/browser/parts/editor/media/letterpress-dark.svg`
+  - `src/src/vs/workbench/browser/parts/editor/media/letterpress-hcDark.svg`
+  - `src/src/vs/workbench/browser/parts/editor/media/letterpress-light.svg`
+  - `src/src/vs/workbench/browser/parts/editor/media/letterpress-hcLight.svg`
 * Extensions
 * Default settings

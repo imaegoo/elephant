@@ -32,7 +32,7 @@ else
 	  export SHOULD_DEPLOY="yes"
 
     snap version
-    snap info elephant
+    snap info codium
   fi
 fi
 
