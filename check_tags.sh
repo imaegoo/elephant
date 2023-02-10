@@ -7,33 +7,71 @@ if [[ -z "${GITHUB_TOKEN}" ]]; then
   exit
 fi
 
-REPOSITORY="${GITHUB_REPOSITORY:-"imaegoo/elephant"}"
-GITHUB_RESPONSE=$( curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${REPOSITORY}/releases/tags/${MS_TAG}")
-ELEPHANT_ASSETS=$( echo "${GITHUB_RESPONSE}" | jq -c '.assets | map(.name)?' )
+APP_NAME_LC=$( echo "${APP_NAME}" | awk '{print tolower($0)}' )
+GITHUB_RESPONSE=$( curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/${ASSETS_REPOSITORY}/releases/latest" )
+LATEST_VERSION=$( echo "${GITHUB_RESPONSE}" | jq -c -r '.tag_name' )
+
+if [[ "${LATEST_VERSION}" =~ ^([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+  if [ "${MS_TAG}" != "${BASH_REMATCH[1]}" ]; then
+    echo "New VSCode version, new build"
+    export SHOULD_BUILD="yes"
+  elif [[ "${NEW_RELEASE}" == "true" ]]; then
+    echo "New release build"
+    export SHOULD_BUILD="yes"
+  elif [[ "${VSCODE_QUALITY}" == "insider" ]]; then
+    BODY=$( echo "${GITHUB_RESPONSE}" | jq -c -r '.body' )
+
+    if [[ "${BODY}" =~ \[([a-z0-9]+)\] ]]; then
+      if [ "${MS_COMMIT}" != "${BASH_REMATCH[1]}" ]; then
+        echo "New VSCode Insiders version, new build"
+        export SHOULD_BUILD="yes"
+      fi
+    fi
+  fi
+
+  if [[ "${SHOULD_BUILD}" != "yes" ]]; then
+    export RELEASE_VERSION="${LATEST_VERSION}"
+    echo "RELEASE_VERSION=${RELEASE_VERSION}" >> "${GITHUB_ENV}"
+
+    echo "Switch to release version: ${RELEASE_VERSION}"
+
+    ASSETS=$( echo "${GITHUB_RESPONSE}" | jq -c '.assets | map(.name)?' )
+  else
+    ASSETS="null"
+  fi
+fi
 
 contains() {
   # add " to match the end of a string so any hashs won't be matched by mistake
-  echo "${ELEPHANT_ASSETS}" | grep "${1}\""
+  echo "${ASSETS}" | grep "${1}\""
 }
 
-if [ "${ELEPHANT_ASSETS}" != "null" ]; then
+if [ "${ASSETS}" != "null" ]; then
   # macos
   if [[ "${OS_NAME}" == "osx" ]]; then
-    if [[ -z $( contains "Elephant-darwin-${VSCODE_ARCH}-${MS_TAG}.zip" ) ]]; then
+    if [[ "${VSCODE_ARCH}" == "arm64" ]]; then
+      if [[ -z $( contains "${APP_NAME}-${RELEASE_VERSION}-src.tar.gz" ) || -z $( contains "${APP_NAME}-${RELEASE_VERSION}-src.zip" ) ]]; then
+        echo "Building on MacOS because we have no SRC"
+        export SHOULD_BUILD="yes"
+        export SHOULD_BUILD_SRC="yes"
+      fi
+    fi
+
+    if [[ -z $( contains "${APP_NAME}-darwin-${VSCODE_ARCH}-${RELEASE_VERSION}.zip" ) ]]; then
       echo "Building on MacOS because we have no ZIP"
       export SHOULD_BUILD="yes"
     else
       export SHOULD_BUILD_ZIP="no"
     fi
 
-    if [[ -z $( contains ".${VSCODE_ARCH}.${MS_TAG}.dmg" ) ]]; then
+    if [[ -z $( contains ".${VSCODE_ARCH}.${RELEASE_VERSION}.dmg" ) ]]; then
       echo "Building on MacOS because we have no DMG"
       export SHOULD_BUILD="yes"
     else
       export SHOULD_BUILD_DMG="no"
     fi
 
-    if [[ -z $( contains "elephant-reh-darwin-${VSCODE_ARCH}-${MS_TAG}.tar.gz" ) ]]; then
+    if [[ -z $( contains "${APP_NAME_LC}-reh-darwin-${VSCODE_ARCH}-${RELEASE_VERSION}.tar.gz" ) ]]; then
       echo "Building on MacOS because we have no REH archive"
       export SHOULD_BUILD="yes"
     else
@@ -46,22 +84,22 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
   elif [[ "${OS_NAME}" == "windows" ]]; then
 
     # windows-arm64
-    if [[ ${VSCODE_ARCH} == "arm64" ]]; then
-      if [[ -z $( contains "ElephantSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+    if [[ "${VSCODE_ARCH}" == "arm64" ]]; then
+      if [[ -z $( contains "${APP_NAME}Setup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows arm64 because we have no system setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_SYS="no"
       fi
 
-      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows arm64 because we have no user setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_USR="no"
       fi
 
-      if [[ -z $( contains "Elephant-win32-${VSCODE_ARCH}-${MS_TAG}.zip" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.zip" ) ]]; then
         echo "Building on Windows arm64 because we have no zip"
         export SHOULD_BUILD="yes"
       else
@@ -75,43 +113,43 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
       fi
 
     # windows-ia32
-    elif [[ ${VSCODE_ARCH} == "ia32" ]]; then
-      if [[ -z $( contains "ElephantSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+    elif [[ "${VSCODE_ARCH}" == "ia32" ]]; then
+      if [[ -z $( contains "${APP_NAME}Setup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows ia32 because we have no system setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_SYS="no"
       fi
 
-      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows ia32 because we have no user setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_USR="no"
       fi
 
-      if [[ -z $( contains "Elephant-win32-${VSCODE_ARCH}-${MS_TAG}.zip" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.zip" ) ]]; then
         echo "Building on Windows ia32 because we have no zip"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_ZIP="no"
       fi
 
-      if [[ -z $( contains "Elephant-${VSCODE_ARCH}-${MS_TAG}.msi" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-${VSCODE_ARCH}-${RELEASE_VERSION}.msi" ) ]]; then
         echo "Building on Windows ia32 because we have no msi"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_MSI="no"
       fi
 
-      if [[ -z $( contains "Elephant-${VSCODE_ARCH}-updates-disabled-${MS_TAG}.msi" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-${VSCODE_ARCH}-updates-disabled-${RELEASE_VERSION}.msi" ) ]]; then
         echo "Building on Windows ia32 because we have no updates-disabled msi"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_MSI_NOUP="no"
       fi
 
-      if [[ -z $( contains "elephant-reh-win32-${VSCODE_ARCH}-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME_LC}-reh-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Windows ia32 because we have no REH archive"
         export SHOULD_BUILD="yes"
       else
@@ -124,42 +162,42 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
 
     # windows-x64
     else
-      if [[ -z $( contains "ElephantSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}Setup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows x64 because we have no system setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_SYS="no"
       fi
 
-      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${MS_TAG}.exe" ) ]]; then
+      if [[ -z $( contains "UserSetup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe" ) ]]; then
         echo "Building on Windows x64 because we have no user setup"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_EXE_USR="no"
       fi
 
-      if [[ -z $( contains "Elephant-win32-${VSCODE_ARCH}-${MS_TAG}.zip" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.zip" ) ]]; then
         echo "Building on Windows x64 because we have no zip"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_ZIP="no"
       fi
 
-      if [[ -z $( contains "Elephant-${VSCODE_ARCH}-${MS_TAG}.msi" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-${VSCODE_ARCH}-${RELEASE_VERSION}.msi" ) ]]; then
         echo "Building on Windows x64 because we have no msi"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_MSI="no"
       fi
 
-      if [[ -z $( contains "Elephant-${VSCODE_ARCH}-updates-disabled-${MS_TAG}.msi" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-${VSCODE_ARCH}-updates-disabled-${RELEASE_VERSION}.msi" ) ]]; then
         echo "Building on Windows x64 because we have no updates-disabled msi"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_MSI_NOUP="no"
       fi
 
-      if [[ -z $( contains "elephant-reh-win32-${VSCODE_ARCH}-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME_LC}-reh-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Windows x64 because we have no REH archive"
         export SHOULD_BUILD="yes"
       else
@@ -173,7 +211,7 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
   elif [[ "${OS_NAME}" == "linux" ]]; then
 
     # linux-arm64
-    if [[ ${VSCODE_ARCH} == "arm64" ]]; then
+    if [[ "${VSCODE_ARCH}" == "arm64" ]]; then
       if [[ -z $( contains "arm64.deb" ) ]]; then
         echo "Building on Linux arm64 because we have no DEB"
         export SHOULD_BUILD="yes"
@@ -188,14 +226,14 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
         export SHOULD_BUILD_RPM="no"
       fi
 
-      if [[ -z $( contains "Elephant-linux-arm64-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-linux-arm64-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux arm64 because we have no TAR"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_TAR="no"
       fi
 
-      if [[ -z $( contains "elephant-reh-linux-arm64-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME_LC}-reh-linux-arm64-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux arm64 because we have no REH archive"
         export SHOULD_BUILD="yes"
       else
@@ -209,7 +247,7 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
       fi
 
     # linux-armhf
-    elif [[ ${VSCODE_ARCH} == "armhf" ]]; then
+    elif [[ "${VSCODE_ARCH}" == "armhf" ]]; then
       if [[ -z $( contains "armhf.deb" ) ]]; then
         echo "Building on Linux arm because we have no DEB"
         export SHOULD_BUILD="yes"
@@ -224,14 +262,14 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
         export SHOULD_BUILD_RPM="no"
       fi
 
-      if [[ -z $( contains "Elephant-linux-armhf-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-linux-armhf-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux arm because we have no TAR"
         export SHOULD_BUILD="yes"
       else
         export SHOULD_BUILD_TAR="no"
       fi
 
-      if [[ -z $( contains "elephant-reh-linux-armhf-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME_LC}-reh-linux-armhf-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux arm because we have no REH archive"
         export SHOULD_BUILD="yes"
       else
@@ -260,7 +298,7 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
         export SHOULD_BUILD_RPM="no"
       fi
 
-      if [[ -z $( contains "Elephant-linux-x64-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME}-linux-x64-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux x64 because we have no TAR"
         export SHOULD_BUILD="yes"
       else
@@ -274,7 +312,7 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
         export SHOULD_BUILD_APPIMAGE="no"
       fi
 
-      if [[ -z $( contains "elephant-reh-linux-x64-${MS_TAG}.tar.gz" ) ]]; then
+      if [[ -z $( contains "${APP_NAME_LC}-reh-linux-x64-${RELEASE_VERSION}.tar.gz" ) ]]; then
         echo "Building on Linux x64 because we have no REH archive"
         export SHOULD_BUILD="yes"
       else
@@ -287,6 +325,20 @@ if [ "${ELEPHANT_ASSETS}" != "null" ]; then
     fi
   fi
 else
+  if [[ "${OS_NAME}" == "linux" ]]; then
+    if [[ "${VSCODE_ARCH}" != "x64" ]]; then
+      export SHOULD_BUILD_APPIMAGE="no"
+    fi
+  elif [[ "${OS_NAME}" == "osx" ]]; then
+    if [[ "${VSCODE_ARCH}" == "arm64" ]]; then
+      export SHOULD_BUILD_SRC="yes"
+    fi
+  elif [[ "${OS_NAME}" == "windows" ]]; then
+    if [[ "${VSCODE_ARCH}" == "arm64" ]]; then
+      export SHOULD_BUILD_REH="no"
+    fi
+  fi
+
   echo "Release assets do not exist at all, continuing build"
   export SHOULD_BUILD="yes"
 fi
@@ -303,3 +355,4 @@ echo "SHOULD_BUILD_REH=${SHOULD_BUILD_REH}" >> "${GITHUB_ENV}"
 echo "SHOULD_BUILD_RPM=${SHOULD_BUILD_RPM}" >> "${GITHUB_ENV}"
 echo "SHOULD_BUILD_TAR=${SHOULD_BUILD_TAR}" >> "${GITHUB_ENV}"
 echo "SHOULD_BUILD_ZIP=${SHOULD_BUILD_ZIP}" >> "${GITHUB_ENV}"
+echo "SHOULD_BUILD_SRC=${SHOULD_BUILD_SRC}" >> "${GITHUB_ENV}"

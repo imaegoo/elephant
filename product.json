@@ -48,10 +48,11 @@
   ],
   "extensionEnabledApiProposals": {
     "ms-vscode.vscode-selfhost-test-provider": [
-      "testObserver"
+      "testObserver",
+      "testContinuousRun"
     ],
     "VisualStudioExptTeam.vscodeintellicode-completions": [
-      "inlineCompletions"
+      "inlineCompletionsAdditions"
     ],
     "ms-vsliveshare.vsliveshare": [
       "contribMenuBarHome",
@@ -60,119 +61,120 @@
       "fileSearchProvider",
       "findTextInFiles",
       "notebookCellExecutionState",
-      "notebookContentProvider",
-      "notebookDocumentEvents",
-      "notebookEditor",
-      "notebookEditorEdit",
       "notebookLiveShare",
       "terminalDimensions",
       "terminalDataWriteEvent",
-      "textDocumentNotebook",
       "textSearchProvider"
     ],
     "ms-vscode.js-debug": [
       "portsAttributes",
       "findTextInFiles",
       "workspaceTrust",
-      "resolvers"
+      "tunnels"
     ],
     "ms-toolsai.vscode-ai-remote": [
-      "resolvers",
-      "notebookEditor"
+      "resolvers"
     ],
     "ms-python.python": [
       "quickPickSortByLabel",
       "testObserver",
-      "notebookEditor"
+      "telemetryLogger"
     ],
     "ms-dotnettools.dotnet-interactive-vscode": [
-      "notebookConcatTextDocument",
-      "notebookContentProvider",
-      "notebookCellExecutionState",
-      "notebookControllerKind",
-      "notebookDebugOptions",
-      "notebookDeprecated",
-      "notebookEditor",
-      "notebookEditorDecorationType",
-      "notebookEditorEdit",
-      "notebookLiveShare",
-      "notebookMessaging",
-      "notebookMime",
-      "textDocumentNotebook"
+      "notebookMessaging"
     ],
     "GitHub.codespaces": [
+      "contribEditSessions",
       "contribMenuBarHome",
       "contribRemoteHelp",
       "contribViewsRemote",
-      "notebookEditor",
       "resolvers",
+      "tunnels",
       "terminalDataWriteEvent",
-      "treeViewReveal"
+      "treeViewReveal",
+      "notebookKernelSource"
     ],
     "ms-vscode.azure-repos": [
       "extensionRuntime",
       "fileSearchProvider",
-      "resolvers",
       "textSearchProvider"
     ],
     "ms-vscode.remote-repositories": [
+      "contribEditSessions",
       "contribRemoteHelp",
       "contribMenuBarHome",
       "contribViewsRemote",
       "contribViewsWelcome",
+      "contribShareMenu",
       "documentFiltersExclusive",
+      "editSessionIdentityProvider",
       "extensionRuntime",
       "fileSearchProvider",
       "quickPickSortByLabel",
       "workspaceTrust",
+      "scmActionButton",
       "scmSelectedProvider",
       "scmValidation",
       "textSearchProvider",
-      "timeline",
-      "notebookEditor"
-    ],
-    "ms-vscode.vscode-github-issue-notebooks": [
-      "notebookEditor"
-    ],
-    "tanhakabir.rest-book": [
-      "notebookEditor"
+      "timeline"
     ],
     "ms-vscode-remote.remote-wsl": [
       "resolvers",
+      "contribRemoteHelp",
       "contribViewsRemote",
       "telemetry"
     ],
     "ms-vscode-remote.remote-ssh": [
       "resolvers",
+      "tunnels",
       "terminalDataWriteEvent",
+      "contribRemoteHelp",
       "contribViewsRemote",
       "telemetry"
     ],
+    "ms-vscode.remote-server": [
+      "resolvers"
+    ],
+    "ms-vscode.remote-explorer": [
+      "contribRemoteHelp",
+      "contribViewsRemote",
+      "extensionsAny"
+    ],
     "ms-vscode-remote.remote-containers": [
+      "contribEditSessions",
       "resolvers",
+      "tunnels",
       "workspaceTrust",
       "terminalDimensions",
+      "contribRemoteHelp",
       "contribViewsRemote"
     ],
     "ms-vscode.js-debug-nightly": [
       "portsAttributes",
       "findTextInFiles",
       "workspaceTrust",
-      "resolvers"
+      "tunnels"
     ],
     "ms-vscode.lsif-browser": [
       "documentFiltersExclusive"
     ],
     "GitHub.vscode-pull-request-github": [
-      "tokenInformation"
+      "contribCommentThreadAdditionalMenu",
+      "tokenInformation",
+      "commentsResolvedState",
+      "contribShareMenu",
+      "contribCommentPeekContext",
+      "treeItemCheckbox",
+      "codiconDecoration",
+      "diffCommand",
+      "contribCommentEditorActionsMenu",
+      "quickDiffProvider"
     ],
     "GitHub.copilot": [
-      "inlineCompletions",
-      "textDocumentNotebook"
+      "inlineCompletionsAdditions"
     ],
     "GitHub.copilot-nightly": [
-      "inlineCompletions",
-      "textDocumentNotebook"
+      "inlineCompletionsAdditions"
     ],
     "GitHub.remotehub": [
       "contribRemoteHelp",
@@ -184,66 +186,57 @@
       "fileSearchProvider",
       "quickPickSortByLabel",
       "workspaceTrust",
-      "resolvers",
       "scmSelectedProvider",
       "scmValidation",
       "textSearchProvider",
-      "timeline",
-      "notebookEditor"
-    ],
-    "GitHub.remotehub-insiders": [
-      "contribRemoteHelp",
-      "contribMenuBarHome",
-      "contribViewsRemote",
-      "contribViewsWelcome",
-      "documentFiltersExclusive",
-      "extensionRuntime",
-      "fileSearchProvider",
-      "quickPickSortByLabel",
-      "workspaceTrust",
-      "resolvers",
-      "scmSelectedProvider",
-      "scmValidation",
-      "textSearchProvider",
-      "timeline",
-      "notebookEditor"
+      "timeline"
     ],
     "ms-python.gather": [
-      "notebookEditor",
       "notebookCellExecutionState"
     ],
     "ms-python.vscode-pylance": [
-      "notebookDocumentEvents",
-      "notebookEditor",
       "notebookCellExecutionState"
     ],
+    "ms-toolsai.jupyter-renderers": [
+      "contribNotebookStaticPreloads"
+    ],
     "ms-toolsai.jupyter": [
-      "notebookConcatTextDocument",
       "notebookControllerKind",
-      "notebookDebugOptions",
       "notebookDeprecated",
-      "notebookEditor",
-      "notebookDocumentEvents",
-      "notebookEditorDecorationType",
-      "notebookEditorEdit",
       "notebookMessaging",
       "notebookMime",
       "notebookCellExecutionState",
       "portsAttributes",
-      "textDocumentNotebook",
-      "quickPickSortByLabel"
+      "quickPickSortByLabel",
+      "notebookKernelSource",
+      "interactiveWindow",
+      "notebookControllerAffinityHidden",
+      "contribNotebookStaticPreloads"
     ],
     "dbaeumer.vscode-eslint": [
-      "tabs",
-      "notebookDocumentEvents",
-      "notebookEditor",
       "notebookCellExecutionState"
     ],
     "ms-vscode.azure-sphere-tools-ui": [
-      "resolvers"
+      "tunnels"
     ],
     "ms-azuretools.vscode-azureappservice": [
       "terminalDataWriteEvent"
+    ],
+    "ms-vscode.anycode": [
+      "extensionsAny"
+    ],
+    "ms-vscode.cpptools": [
+      "terminalDataWriteEvent"
+    ],
+    "redhat.java": [
+      "documentPaste"
+    ],
+    "jeanp413.open-remote-ssh": [
+      "resolvers",
+      "tunnels",
+      "terminalDataWriteEvent",
+      "contribRemoteHelp",
+      "contribViewsRemote"
     ]
   },
   "extensionKind": {

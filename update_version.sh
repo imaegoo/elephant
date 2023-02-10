@@ -2,13 +2,22 @@
 
 set -e
 
-if [[ "${SHOULD_BUILD}" != "yes" ]]; then
+if [[ "${SHOULD_BUILD}" != "yes" && "${FORCE_UPDATE}" != "true" ]]; then
   echo "Will not update version JSON because we did not build"
   exit
 fi
 
 if [[ -z "${GITHUB_TOKEN}" ]]; then
   echo "Will not update version JSON because no GITHUB_TOKEN defined"
+  exit
+fi
+
+if [[ "${FORCE_UPDATE}" == "true" ]]; then
+  . version.sh
+fi
+
+if [[ -z "${BUILD_SOURCEVERSION}" ]]; then
+  echo "Will not update version JSON because no BUILD_SOURCEVERSION defined"
   exit
 fi
 
@@ -23,37 +32,33 @@ fi
 #  }
 
 # `url` is URL_BASE + filename of asset e.g.
-#    darwin: https://github.com/imaegoo/elephant/releases/download/${MS_TAG}/Elephant-darwin-${MS_TAG}.zip
-# `name` is $MS_TAG
-# `version` is $MS_COMMIT
-# `productVersion` is $MS_TAG
+#    darwin: https://github.com/${ASSETS_REPOSITORY}/releases/download/${RELEASE_VERSION}/${APP_NAME}-darwin-${RELEASE_VERSION}.zip
+# `name` is $RELEASE_VERSION
+# `version` is $BUILD_SOURCEVERSION
+# `productVersion` is $RELEASE_VERSION
 # `hash` in <filename>.sha1
 # `timestamp` is $(node -e 'console.log(Date.now())')
 # `sha256hash` in <filename>.sha256
 
-URL_BASE="https://github.com/imaegoo/elephant/releases/download/${MS_TAG}"
-
-# to make testing on forks easier
-VERSIONS_REPO="${GITHUB_USERNAME}/versions"
-echo "Versions repo: ${VERSIONS_REPO}"
+URL_BASE="https://github.com/${ASSETS_REPOSITORY}/releases/download/${RELEASE_VERSION}"
 
 generateJson() {
   JSON_DATA="{}"
 
   # generate parts
   local url="${URL_BASE}/${ASSET_NAME}"
-  local name="${MS_TAG}"
-  local version="${MS_COMMIT}"
-  local productVersion="${MS_TAG}"
+  local name="${RELEASE_VERSION}"
+  local version="${BUILD_SOURCEVERSION}"
+  local productVersion="${RELEASE_VERSION}"
   local timestamp=$(node -e 'console.log(Date.now())')
 
-  if [[ ! -f "artifacts/${ASSET_NAME}" ]]; then
-    echo "Downloading artifact '${ASSET_NAME}'"
-    gh release download "${MS_TAG}" --dir "artifacts" --pattern "${ASSET_NAME}*"
+  if [[ ! -f "assets/${ASSET_NAME}" ]]; then
+    echo "Downloading asset '${ASSET_NAME}'"
+    gh release download --repo "${ASSETS_REPOSITORY}" "${RELEASE_VERSION}" --dir "assets" --pattern "${ASSET_NAME}*"
   fi
 
-  local sha1hash=$(cat "artifacts/${ASSET_NAME}.sha1" | awk '{ print $1 }')
-  local sha256hash=$(cat "artifacts/${ASSET_NAME}.sha256" | awk '{ print $1 }')
+  local sha1hash=$(cat "assets/${ASSET_NAME}.sha1" | awk '{ print $1 }')
+  local sha256hash=$(cat "assets/${ASSET_NAME}.sha256" | awk '{ print $1 }')
 
   # check that nothing is blank (blank indicates something awry with build)
   for key in url name version productVersion sha1hash timestamp sha256hash; do
@@ -79,64 +84,69 @@ generateJson() {
 updateLatestVersion() {
   echo "Generating ${VERSION_PATH}/latest.json"
 
+  # do not update the same version
+  if [[ -f "versions/${VERSION_PATH}/latest.json" ]]; then
+    CURRENT_VERSION=$( jq -r '.name' "versions/${VERSION_PATH}/latest.json" )
+
+    if [[ "${CURRENT_VERSION}" == "${RELEASE_VERSION}" && "${FORCE_UPDATE}" != "true" ]]; then
+      return
+    fi
+  fi
+
+  mkdir -p "versions/${VERSION_PATH}"
+
   generateJson
 
-  cd versions
-
-  # create/update the latest.json file in the correct location
-  mkdir -p "${VERSION_PATH}"
-  echo "${JSON_DATA}" > "${VERSION_PATH}/latest.json"
-
-  cd ..
+  echo "${JSON_DATA}" > "versions/${VERSION_PATH}/latest.json"
 }
 
 # init versions repo for later commiting + pushing the json file to it
 # thank you https://www.vinaygopinath.me/blog/tech/commit-to-master-branch-on-github-using-travis-ci/
-git clone "https://github.com/${VERSIONS_REPO}.git"
+git clone "https://github.com/${VERSIONS_REPOSITORY}.git"
 cd versions
-git config user.email "hellp@imaegoo.com"
-git config user.name "iMaeGoo CI"
+git config user.email "$( echo "${GITHUB_USERNAME}" | awk '{print tolower($0)}' )-ci@not-real.com"
+git config user.name "${GITHUB_USERNAME} CI"
 git remote rm origin
-git remote add origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${VERSIONS_REPO}.git" > /dev/null 2>&1
+git remote add origin "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${VERSIONS_REPOSITORY}.git" > /dev/null 2>&1
 cd ..
 
 if [[ "${OS_NAME}" == "osx" ]]; then
-  ASSET_NAME=Elephant-darwin-${VSCODE_ARCH}-${MS_TAG}.zip
-  VERSION_PATH="darwin/${VSCODE_ARCH}"
+  ASSET_NAME="${APP_NAME}-darwin-${VSCODE_ARCH}-${RELEASE_VERSION}.zip"
+  VERSION_PATH="${VSCODE_QUALITY}/darwin/${VSCODE_ARCH}"
   updateLatestVersion
 elif [[ "${OS_NAME}" == "windows" ]]; then
   # system installer
-  ASSET_NAME=ElephantSetup-${VSCODE_ARCH}-${MS_TAG}.exe
-  VERSION_PATH="win32/${VSCODE_ARCH}/system"
+  ASSET_NAME="${APP_NAME}Setup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe"
+  VERSION_PATH="${VSCODE_QUALITY}/win32/${VSCODE_ARCH}/system"
   updateLatestVersion
 
   # user installer
-  ASSET_NAME=ElephantUserSetup-${VSCODE_ARCH}-${MS_TAG}.exe
-  VERSION_PATH="win32/${VSCODE_ARCH}/user"
+  ASSET_NAME="${APP_NAME}UserSetup-${VSCODE_ARCH}-${RELEASE_VERSION}.exe"
+  VERSION_PATH="${VSCODE_QUALITY}/win32/${VSCODE_ARCH}/user"
   updateLatestVersion
 
   # windows archive
-  ASSET_NAME=Elephant-win32-${VSCODE_ARCH}-${MS_TAG}.zip
-  VERSION_PATH="win32/${VSCODE_ARCH}/archive"
+  ASSET_NAME="${APP_NAME}-win32-${VSCODE_ARCH}-${RELEASE_VERSION}.zip"
+  VERSION_PATH="${VSCODE_QUALITY}/win32/${VSCODE_ARCH}/archive"
   updateLatestVersion
 
   if [[ "${VSCODE_ARCH}" == "ia32" || "${VSCODE_ARCH}" == "x64" ]]; then
     # msi
-    ASSET_NAME=Elephant-${VSCODE_ARCH}-${MS_TAG}.msi
-    VERSION_PATH="win32/${VSCODE_ARCH}/msi"
+    ASSET_NAME="${APP_NAME}-${VSCODE_ARCH}-${RELEASE_VERSION}.msi"
+    VERSION_PATH="${VSCODE_QUALITY}/win32/${VSCODE_ARCH}/msi"
     updateLatestVersion
 
     # updates-disabled msi
-    ASSET_NAME=Elephant-${VSCODE_ARCH}-updates-disabled-${MS_TAG}.msi
-    VERSION_PATH="win32/${VSCODE_ARCH}/msi-updates-disabled"
+    ASSET_NAME="${APP_NAME}-${VSCODE_ARCH}-updates-disabled-${RELEASE_VERSION}.msi"
+    VERSION_PATH="${VSCODE_QUALITY}/win32/${VSCODE_ARCH}/msi-updates-disabled"
     updateLatestVersion
   fi
 else # linux
   # update service links to tar.gz file
   # see https://update.code.visualstudio.com/api/update/linux-x64/stable/VERSION
   # as examples
-  ASSET_NAME=Elephant-linux-${VSCODE_ARCH}-${MS_TAG}.tar.gz
-  VERSION_PATH="linux/${VSCODE_ARCH}"
+  ASSET_NAME="${APP_NAME}-linux-${VSCODE_ARCH}-${RELEASE_VERSION}.tar.gz"
+  VERSION_PATH="${VSCODE_QUALITY}/linux/${VSCODE_ARCH}"
   updateLatestVersion
 fi
 

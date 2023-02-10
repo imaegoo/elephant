@@ -1,97 +1,112 @@
 diff --git a/extensions/github-authentication/src/githubServer.ts b/extensions/github-authentication/src/githubServer.ts
-index c366ff3..75f32da 100644
+index 8565178..e35d29f 100644
 --- a/extensions/github-authentication/src/githubServer.ts
 +++ b/extensions/github-authentication/src/githubServer.ts
-@@ -3,27 +3,13 @@
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
-  *--------------------------------------------------------------------------------------------*/
- 
--import * as nls from 'vscode-nls';
+@@ -6,4 +6,2 @@
  import * as vscode from 'vscode';
- import fetch, { Response } from 'node-fetch';
--import { v4 as uuid } from 'uuid';
+-import * as path from 'path';
 -import { PromiseAdapter, promiseFromEvent } from './common/utils';
- import { ExperimentationTelemetry } from './experimentationService';
- import { AuthProviderType } from './github';
+ import { ExperimentationTelemetry } from './common/experimentationService';
+@@ -11,14 +9,6 @@ import { AuthProviderType, UriEventHandler } from './github';
  import { Log } from './common/logger';
 -import { isSupportedEnvironment } from './common/env';
--import { LoopbackAuthServer } from './authServer';
--import path = require('path');
--
--const localize = nls.loadMessageBundle();
+-import { LoopbackAuthServer } from './node/authServer';
+-import { crypto } from './node/crypto';
+ import { fetching } from './node/fetch';
+ 
 -const CLIENT_ID = '01ab8ac9400c4e429b23';
--const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize';
--// TODO: change to stable when that happens
 -const GITHUB_TOKEN_URL = 'https://vscode.dev/codeExchangeProxyEndpoints/github/login/oauth/access_token';
--const NETWORK_ERROR = 'network error';
+ const NETWORK_ERROR = 'network error';
  
 -const REDIRECT_URL_STABLE = 'https://vscode.dev/redirect';
 -const REDIRECT_URL_INSIDERS = 'https://insiders.vscode.dev/redirect';
-+const NETWORK_ERROR = 'network error';
- 
- class UriEventHandler extends vscode.EventEmitter<vscode.Uri> implements vscode.UriHandler {
- 	constructor(private readonly Logger: Log) {
-@@ -43,14 +29,6 @@ export interface IGitHubServer extends vscode.Disposable {
- 	friendlyName: string;
- 	type: AuthProviderType;
- }
 -
+ export interface IGitHubServer {
+@@ -30,8 +20,2 @@ export interface IGitHubServer {
+ 
 -interface IGitHubDeviceCodeResponse {
 -	device_code: string;
 -	user_code: string;
 -	verification_uri: string;
 -	interval: number;
 -}
--
- async function getScopes(token: string, serverUri: vscode.Uri, logger: Log): Promise<string[]> {
- 	try {
- 		logger.info('Getting token scopes...');
-@@ -118,23 +96,11 @@ export class GitHubServer implements IGitHubServer {
- 	friendlyName = 'GitHub';
- 	type = AuthProviderType.github;
  
--	private _pendingNonces = new Map<string, string[]>();
--	private _codeExchangePromises = new Map<string, { promise: Promise<string>; cancel: vscode.EventEmitter<void> }>();
- 	private _disposable: vscode.Disposable;
- 	private _uriHandler = new UriEventHandler(this._logger);
--	private readonly getRedirectEndpoint: Thenable<string>;
+@@ -63,8 +47,4 @@ export class GitHubServer implements IGitHubServer {
  
--	constructor(private readonly _supportDeviceCodeFlow: boolean, private readonly _logger: Log, private readonly _telemetryReporter: ExperimentationTelemetry) {
-+	constructor(_supportDeviceCodeFlow: boolean, private readonly _logger: Log, private readonly _telemetryReporter: ExperimentationTelemetry) {
- 		this._disposable = vscode.window.registerUriHandler(this._uriHandler);
+-	private readonly _pendingNonces = new Map<string, string[]>();
+-	private readonly _codeExchangePromises = new Map<string, { promise: Promise<string>; cancel: vscode.EventEmitter<void> }>();
+ 	private readonly _type: AuthProviderType;
+ 
+-	private _redirectEndpoint: string | undefined;
 -
--		this.getRedirectEndpoint = vscode.commands.executeCommand<{ [providerId: string]: string } | undefined>('workbench.getCodeExchangeProxyEndpoints').then((proxyEndpoints) => {
+ 	constructor(
+@@ -72,3 +52,5 @@ export class GitHubServer implements IGitHubServer {
+ 		private readonly _telemetryReporter: ExperimentationTelemetry,
++		// @ts-ignore
+ 		private readonly _uriHandler: UriEventHandler,
++		// @ts-ignore
+ 		private readonly _extensionKind: vscode.ExtensionKind,
+@@ -87,41 +69,2 @@ export class GitHubServer implements IGitHubServer {
+ 
+-	private async getRedirectEndpoint(): Promise<string> {
+-		if (this._redirectEndpoint) {
+-			return this._redirectEndpoint;
+-		}
+-		if (this._type === AuthProviderType.github) {
+-			const proxyEndpoints = await vscode.commands.executeCommand<{ [providerId: string]: string } | undefined>('workbench.getCodeExchangeProxyEndpoints');
 -			// If we are running in insiders vscode.dev, then ensure we use the redirect route on that.
--			let redirectUri = REDIRECT_URL_STABLE;
+-			this._redirectEndpoint = REDIRECT_URL_STABLE;
 -			if (proxyEndpoints?.github && new URL(proxyEndpoints.github).hostname === 'insiders.vscode.dev') {
--				redirectUri = REDIRECT_URL_INSIDERS;
+-				this._redirectEndpoint = REDIRECT_URL_INSIDERS;
 -			}
--			return redirectUri;
--		});
- 	}
- 
- 	dispose() {
-@@ -152,181 +118,17 @@ export class GitHubServer implements IGitHubServer {
- 
- 		// Used for showing a friendlier message to the user when the explicitly cancel a flow.
+-			return this._redirectEndpoint;
+-		} else {
+-			// GHES
+-			const result = await fetching(this.getServerUri('/meta').toString(true));
+-			if (result.ok) {
+-				try {
+-					const json: { installed_version: string } = await result.json();
+-					const [majorStr, minorStr, _patch] = json.installed_version.split('.');
+-					const major = Number(majorStr);
+-					const minor = Number(minorStr);
+-					if (major >= 4 || major === 3 && minor >= 8
+-					) {
+-						// GHES 3.8 and above used vscode.dev/redirect as the route.
+-						// It only supports a single redirect endpoint, so we can't use
+-						// insiders.vscode.dev/redirect when we're running in Insiders, unfortunately.
+-						this._redirectEndpoint = 'https://vscode.dev/redirect';
+-					}
+-				} catch (e) {
+-					this._logger.error(e);
+-				}
+-			}
+-
+-			// TODO in like 1 year change the default vscode.dev/redirect maybe
+-			this._redirectEndpoint = 'https://vscode-auth.github.com/';
+-		}
+-		return this._redirectEndpoint;
+-	}
+-
+ 	// TODO@joaomoreno TODO@TylerLeonhardt
+@@ -137,57 +80,2 @@ export class GitHubServer implements IGitHubServer {
  		let userCancelled: boolean | undefined;
--		const yes = localize('yes', "Yes");
--		const no = localize('no', "No");
+-		const yes = vscode.l10n.t('Yes');
+-		const no = vscode.l10n.t('No');
 -		const promptToContinue = async () => {
 -			if (userCancelled === undefined) {
 -				// We haven't had a failure yet so wait to prompt
 -				return;
 -			}
 -			const message = userCancelled
--				? localize('userCancelledMessage', "Having trouble logging in? Would you like to try a different way?")
--				: localize('otherReasonMessage', "You have not yet finished authorizing this extension to use GitHub. Would you like to keep trying?");
+-				? vscode.l10n.t('Having trouble logging in? Would you like to try a different way?')
+-				: vscode.l10n.t('You have not yet finished authorizing this extension to use GitHub. Would you like to keep trying?');
 -			const result = await vscode.window.showWarningMessage(message, yes, no);
 -			if (result !== yes) {
 -				throw new Error('Cancelled');
 -			}
 -		};
 -
--		const nonce = uuid();
+-		const nonce: string = crypto.getRandomValues(new Uint32Array(2)).reduce((prev, curr) => prev += curr.toString(16), '');
 -		const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(`${vscode.env.uriScheme}://vscode.github-authentication/did-authenticate?nonce=${encodeURIComponent(nonce)}`));
 -
 -		const supported = isSupportedEnvironment(callbackUri);
@@ -104,8 +119,13 @@ index c366ff3..75f32da 100644
 -			}
 -		}
 -
--		// Starting a local server isn't supported in web
--		if (vscode.env.uiKind === vscode.UIKind.Desktop) {
+-		// Starting a local server is only supported if:
+-		// 1. We are in a UI extension because we need to open a port on the machine that has the browser
+-		// 2. We are in a node runtime because we need to open a port on the machine
+-		if (
+-			this._extensionKind === vscode.ExtensionKind.UI &&
+-			typeof navigator === 'undefined'
+-		) {
 -			try {
 -				await promptToContinue();
 -				return await this.doLoginWithLocalServer(scopes);
@@ -114,8 +134,9 @@ index c366ff3..75f32da 100644
 -				userCancelled = e.message ?? e === 'User Cancelled';
 -			}
 -		}
- 
--		if (this._supportDeviceCodeFlow) {
+-
+-		// We only can use the Device Code flow when we have a full node environment because of CORS.
+-		if (typeof navigator === 'undefined') {
 -			try {
 -				await promptToContinue();
 -				return await this.doLoginDeviceCodeFlow(scopes);
@@ -123,7 +144,11 @@ index c366ff3..75f32da 100644
 -				this._logger.error(e);
 -				userCancelled = e.message ?? e === 'User Cancelled';
 -			}
--		} else if (!supported) {
+-		}
+ 
+@@ -195,10 +83,7 @@ export class GitHubServer implements IGitHubServer {
+ 		// With that said, GitHub Enterprise isn't used by Settings Sync so we can use PATs for that.
+-		if (!supported || this._type === AuthProviderType.githubEnterprise) {
 -			try {
 -				await promptToContinue();
 -				return await this.doLoginWithPat(scopes);
@@ -137,41 +162,47 @@ index c366ff3..75f32da 100644
 +			this._logger.error(e);
 +			userCancelled = e.message ?? e === 'User Cancelled';
  		}
- 
- 		throw new Error(userCancelled ? 'Cancelled' : 'No auth flow succeeded.');
- 	}
+@@ -208,136 +93,2 @@ export class GitHubServer implements IGitHubServer {
  
 -	private async doLoginWithoutLocalServer(scopes: string, nonce: string, callbackUri: vscode.Uri): Promise<string> {
 -		this._logger.info(`Trying without local server... (${scopes})`);
 -		return await vscode.window.withProgress<string>({
 -			location: vscode.ProgressLocation.Notification,
--			title: localize('signingIn', "Signing in to github.com..."),
+-			title: vscode.l10n.t({
+-				message: 'Signing in to {0}...',
+-				args: [this.baseUri.authority],
+-				comment: ['The {0} will be a url, e.g. github.com']
+-			}),
 -			cancellable: true
 -		}, async (_, token) => {
 -			const existingNonces = this._pendingNonces.get(scopes) || [];
 -			this._pendingNonces.set(scopes, [...existingNonces, nonce]);
--			const redirectUri = await this.getRedirectEndpoint;
+-			const redirectUri = await this.getRedirectEndpoint();
 -			const searchParams = new URLSearchParams([
 -				['client_id', CLIENT_ID],
 -				['redirect_uri', redirectUri],
 -				['scope', scopes],
 -				['state', encodeURIComponent(callbackUri.toString(true))]
 -			]);
--			const uri = vscode.Uri.parse(`${GITHUB_AUTHORIZE_URL}?${searchParams.toString()}`);
+-
+-			const uri = vscode.Uri.parse(this.baseUri.with({
+-				path: '/login/oauth/authorize',
+-				query: searchParams.toString()
+-			}).toString(true));
 -			await vscode.env.openExternal(uri);
 -
 -			// Register a single listener for the URI callback, in case the user starts the login process multiple times
 -			// before completing it.
 -			let codeExchangePromise = this._codeExchangePromises.get(scopes);
 -			if (!codeExchangePromise) {
--				codeExchangePromise = promiseFromEvent(this._uriHandler.event, this.handleUri(scopes));
+-				codeExchangePromise = promiseFromEvent(this._uriHandler!.event, this.handleUri(scopes));
 -				this._codeExchangePromises.set(scopes, codeExchangePromise);
 -			}
 -
 -			try {
 -				return await Promise.race([
 -					codeExchangePromise.promise,
--					new Promise<string>((_, reject) => setTimeout(() => reject('Cancelled'), 60000)),
+-					new Promise<string>((_, reject) => setTimeout(() => reject('Timed out'), 300_000)), // 5min timeout
 -					promiseFromEvent<any, any>(token.onCancellationRequested, (_, __, reject) => { reject('User Cancelled'); }).promise
 -				]);
 -			} finally {
@@ -186,17 +217,25 @@ index c366ff3..75f32da 100644
 -		this._logger.info(`Trying with local server... (${scopes})`);
 -		return await vscode.window.withProgress<string>({
 -			location: vscode.ProgressLocation.Notification,
--			title: localize('signingInAnotherWay', "Signing in to github.com..."),
+-			title: vscode.l10n.t({
+-				message: 'Signing in to {0}...',
+-				args: [this.baseUri.authority],
+-				comment: ['The {0} will be a url, e.g. github.com']
+-			}),
 -			cancellable: true
 -		}, async (_, token) => {
--			const redirectUri = await this.getRedirectEndpoint;
+-			const redirectUri = await this.getRedirectEndpoint();
 -			const searchParams = new URLSearchParams([
 -				['client_id', CLIENT_ID],
 -				['redirect_uri', redirectUri],
 -				['scope', scopes],
 -			]);
--			const loginUrl = `${GITHUB_AUTHORIZE_URL}?${searchParams.toString()}`;
--			const server = new LoopbackAuthServer(path.join(__dirname, '../media'), loginUrl);
+-
+-			const loginUrl = this.baseUri.with({
+-				path: '/login/oauth/authorize',
+-				query: searchParams.toString()
+-			});
+-			const server = new LoopbackAuthServer(path.join(__dirname, '../media'), loginUrl.toString(true));
 -			const port = await server.start();
 -
 -			let codeToExchange;
@@ -204,7 +243,7 @@ index c366ff3..75f32da 100644
 -				vscode.env.openExternal(vscode.Uri.parse(`http://127.0.0.1:${port}/signin?nonce=${encodeURIComponent(server.nonce)}`));
 -				const { code } = await Promise.race([
 -					server.waitForOAuthResponse(),
--					new Promise<any>((_, reject) => setTimeout(() => reject('Cancelled'), 60000)),
+-					new Promise<any>((_, reject) => setTimeout(() => reject('Timed out'), 300_000)), // 5min timeout
 -					promiseFromEvent<any, any>(token.onCancellationRequested, (_, __, reject) => { reject('User Cancelled'); }).promise
 -				]);
 -				codeToExchange = code;
@@ -223,8 +262,11 @@ index c366ff3..75f32da 100644
 -		this._logger.info(`Trying device code flow... (${scopes})`);
 -
 -		// Get initial device code
--		const uri = `https://github.com/login/device/code?client_id=${CLIENT_ID}&scope=${scopes}`;
--		const result = await fetch(uri, {
+-		const uri = this.baseUri.with({
+-			path: '/login/device/code',
+-			query: `client_id=${CLIENT_ID}&scope=${scopes}`
+-		});
+-		const result = await fetching(uri.toString(true), {
 -			method: 'POST',
 -			headers: {
 -				Accept: 'application/json'
@@ -236,15 +278,15 @@ index c366ff3..75f32da 100644
 -
 -		const json = await result.json() as IGitHubDeviceCodeResponse;
 -
--
+-		const button = vscode.l10n.t('Copy & Continue to GitHub');
 -		const modalResult = await vscode.window.showInformationMessage(
--			localize('code.title', "Your Code: {0}", json.user_code),
+-			vscode.l10n.t({ message: 'Your Code: {0}', args: [json.user_code], comment: ['The {0} will be a code, e.g. 123-456'] }),
 -			{
 -				modal: true,
--				detail: localize('code.detail', "To finish authenticating, navigate to GitHub and paste in the above one-time code.")
--			}, 'Copy & Continue to GitHub');
+-				detail: vscode.l10n.t('To finish authenticating, navigate to GitHub and paste in the above one-time code.')
+-			}, button);
 -
--		if (modalResult !== 'Copy & Continue to GitHub') {
+-		if (modalResult !== button) {
 -			throw new Error('User Cancelled');
 -		}
 -
@@ -255,12 +297,9 @@ index c366ff3..75f32da 100644
 -
 -		return await this.waitForDeviceCodeAccessToken(json);
 -	}
- 
+-
  	private async doLoginWithPat(scopes: string): Promise<string> {
- 		this._logger.info(`Trying to retrieve PAT... (${scopes})`);
-@@ -351,118 +153,6 @@ export class GitHubServer implements IGitHubServer {
- 		return token;
- 	}
+@@ -381,124 +132,2 @@ export class GitHubServer implements IGitHubServer {
  
 -	private async waitForDeviceCodeAccessToken(
 -		json: IGitHubDeviceCodeResponse,
@@ -268,13 +307,19 @@ index c366ff3..75f32da 100644
 -		return await vscode.window.withProgress<string>({
 -			location: vscode.ProgressLocation.Notification,
 -			cancellable: true,
--			title: localize(
--				'progress',
--				"Open [{0}]({0}) in a new tab and paste your one-time code: {1}",
--				json.verification_uri,
--				json.user_code)
+-			title: vscode.l10n.t({
+-				message: 'Open [{0}]({0}) in a new tab and paste your one-time code: {1}',
+-				args: [json.verification_uri, json.user_code],
+-				comment: [
+-					'The [{0}]({0}) will be a url and the {1} will be a code, e.g. 123-456',
+-					'{Locked="[{0}]({0})"}'
+-				]
+-			})
 -		}, async (_, token) => {
--			const refreshTokenUri = `https://github.com/login/oauth/access_token?client_id=${CLIENT_ID}&device_code=${json.device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`;
+-			const refreshTokenUri = this.baseUri.with({
+-				path: '/login/oauth/access_token',
+-				query: `client_id=${CLIENT_ID}&device_code=${json.device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`
+-			});
 -
 -			// Try for 2 minutes
 -			const attempts = 120 / json.interval;
@@ -285,7 +330,7 @@ index c366ff3..75f32da 100644
 -				}
 -				let accessTokenResult;
 -				try {
--					accessTokenResult = await fetch(refreshTokenUri, {
+-					accessTokenResult = await fetching(refreshTokenUri.toString(true), {
 -						method: 'POST',
 -						headers: {
 -							Accept: 'application/json'
@@ -350,8 +395,12 @@ index c366ff3..75f32da 100644
 -		const proxyEndpoints: { [providerId: string]: string } | undefined = await vscode.commands.executeCommand('workbench.getCodeExchangeProxyEndpoints');
 -		const endpointUrl = proxyEndpoints?.github ? `${proxyEndpoints.github}login/oauth/access_token` : GITHUB_TOKEN_URL;
 -
--		const body = `code=${code}`;
--		const result = await fetch(endpointUrl, {
+-		const body = new URLSearchParams([['code', code]]);
+-		if (this._type === AuthProviderType.githubEnterprise) {
+-			body.append('github_enterprise', this.baseUri.toString(true));
+-			body.append('redirect_uri', await this.getRedirectEndpoint());
+-		}
+-		const result = await fetching(endpointUrl, {
 -			method: 'POST',
 -			headers: {
 -				Accept: 'application/json',
@@ -359,7 +408,7 @@ index c366ff3..75f32da 100644
 -				'Content-Length': body.toString()
 -
 -			},
--			body
+-			body: body.toString()
 -		});
 -
 -		if (result.ok) {
@@ -375,32 +424,24 @@ index c366ff3..75f32da 100644
 -	}
 -
  	private getServerUri(path: string = '') {
- 		const apiUri = vscode.Uri.parse('https://api.github.com');
- 		return vscode.Uri.parse(`${apiUri.scheme}://${apiUri.authority}${path}`);
 diff --git a/src/vs/workbench/browser/parts/activitybar/activitybarActions.ts b/src/vs/workbench/browser/parts/activitybar/activitybarActions.ts
-index 36647e6..55e722b 100644
+index 266311d..f066323 100644
 --- a/src/vs/workbench/browser/parts/activitybar/activitybarActions.ts
 +++ b/src/vs/workbench/browser/parts/activitybar/activitybarActions.ts
-@@ -271,7 +271,7 @@ export class AccountsActivityActionViewItem extends MenuActivityActionViewItem {
- 			}
- 		});
+@@ -307,3 +307,3 @@ export class AccountsActivityActionViewItem extends MenuActivityActionViewItem {
  
 -		if (providers.length && !menus.length) {
 +		if (!menus.length) {
  			const noAccountsAvailableAction = disposables.add(new Action('noAccountsAvailable', localize('noAccounts', "You are not signed in to any accounts"), undefined, false));
- 			menus.push(noAccountsAvailableAction);
- 		}
 diff --git a/src/vs/workbench/services/authentication/browser/authenticationService.ts b/src/vs/workbench/services/authentication/browser/authenticationService.ts
-index f543021..ad40bc3 100644
+index 8dd6e19..10c2611 100644
 --- a/src/vs/workbench/services/authentication/browser/authenticationService.ts
 +++ b/src/vs/workbench/services/authentication/browser/authenticationService.ts
-@@ -272,16 +272,6 @@ export class AuthenticationService extends Disposable implements IAuthentication
- 				this.removeAccessRequest(id, extensionId);
- 			});
+@@ -274,12 +274,2 @@ export class AuthenticationService extends Disposable implements IAuthentication
  		}
 -
 -		if (!this._authenticationProviders.size) {
--			this._placeholderMenuItem = MenuRegistry.appendMenuItem(MenuId.AccountsContext, {
+-			placeholderMenuItem = MenuRegistry.appendMenuItem(MenuId.AccountsContext, {
 -				command: {
 -					id: 'noAuthenticationProviders',
 -					title: nls.localize('loading', "Loading..."),
@@ -409,5 +450,3 @@ index f543021..ad40bc3 100644
 -			});
 -		}
  	}
- 
- 	async sessionsUpdate(id: string, event: AuthenticationSessionsChangeEvent): Promise<void> {
