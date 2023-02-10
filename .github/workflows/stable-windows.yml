@@ -9,8 +9,6 @@ on:
       force_version:
         type: boolean
         description: Force update version
-  schedule:
-    - cron: '0 18 * * *'
   push:
     branches: [ master ]
     paths-ignore:
@@ -100,32 +98,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.STRONGER_GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
         run: ./update_version.sh
-        if: env.SHOULD_DEPLOY == 'yes'
-
-  winget:
-    needs: build
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
-    env:
-      APP_IDENTIFIER: Elephant.Elephant
-    if: needs.build.outputs.SHOULD_DEPLOY == 'yes'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Check version
-        run: ./stores/winget/check_version.sh
-        env:
-          RELEASE_VERSION: ${{ needs.build.outputs.RELEASE_VERSION }}
-
-      - name: Release to WinGet
-        uses: vedantmgoyal2009/winget-releaser@v1
-        with:
-          identifier: ${{ env.APP_IDENTIFIER }}
-          version: ${{ env.RELEASE_VERSION }}
-          release-tag: ${{ env.RELEASE_VERSION }}
-          installers-regex: '\.exe$' # only .exe files
-          token: ${{ secrets.STRONGER_GITHUB_TOKEN }}
         if: env.SHOULD_DEPLOY == 'yes'

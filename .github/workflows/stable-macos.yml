@@ -9,8 +9,6 @@ on:
       force_version:
         type: boolean
         description: Force update version
-  schedule:
-    - cron: '0 18 * * *'
   push:
     branches: [ master ]
     paths-ignore:

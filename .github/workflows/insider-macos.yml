@@ -9,8 +9,6 @@ on:
       new_release:
         type: boolean
         description: Force new Release
-  schedule:
-    - cron: '0 8 * * *'
   push:
     branches: [ insider ]
     paths-ignore:
