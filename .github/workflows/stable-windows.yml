@@ -21,7 +21,7 @@ on:
     - '**/*.md'
 
 env:
-  APP_NAME: VSCodium
+  APP_NAME: Elephant
   ASSETS_REPOSITORY: ${{ github.repository }}
   OS_NAME: windows
   VERSIONS_REPOSITORY: ${{ github.repository_owner }}/versions
@@ -109,7 +109,7 @@ jobs:
       run:
         shell: bash
     env:
-      APP_IDENTIFIER: VSCodium.VSCodium
+      APP_IDENTIFIER: Elephant.Elephant
     if: needs.build.outputs.SHOULD_DEPLOY == 'yes'
 
     steps:

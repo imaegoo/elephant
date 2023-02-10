@@ -18,6 +18,6 @@ index 63e7f2d..e9a6b7d 100644
 +		returns: 'string',
 +	},
 +	handler: async (_) => {
-+		return 'https://github.com/VSCodium/vscodium-insiders/releases/download/${version}.${release}-insider/vscodium-reh-${os}-${arch}-${version}.${release}-insider.tar.gz';
++		return 'https://github.com/imaegoo/elephant-insiders/releases/download/${version}.${release}-insider/elephant-reh-${os}-${arch}-${version}.${release}-insider.tar.gz';
 +	}
 +});

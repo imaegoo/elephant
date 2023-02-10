@@ -5,7 +5,7 @@ index 33e66be..a7ade0a 100644
 @@ -468,3 +468,3 @@ export class IssueReporter extends Disposable {
  		if (title) {
 -			this.searchDuplicates(title, issueDescription);
-+			this.searchGitHub('VSCodium/vscodium', title);
++			this.searchGitHub('imaegoo/elephant', title);
  		} else {
 @@ -556,33 +556,2 @@ export class IssueReporter extends Disposable {
  
@@ -53,7 +53,7 @@ index a58acca..1903a0c 100644
 @@ -77,3 +77,3 @@ ${this._data.issueDescription}
  ${this.getExtensionVersion()}
 -VS Code version: ${this._data.versionInfo && this._data.versionInfo.vscodeVersion}
-+VSCodium version: ${this._data.versionInfo && this._data.versionInfo.vscodeVersion}
++Elephant version: ${this._data.versionInfo && this._data.versionInfo.vscodeVersion}
  OS version: ${this._data.versionInfo && this._data.versionInfo.os}
 diff --git a/src/vs/code/electron-sandbox/issue/issueReporterPage.ts b/src/vs/code/electron-sandbox/issue/issueReporterPage.ts
 index 6467d66..d425016 100644
@@ -62,12 +62,12 @@ index 6467d66..d425016 100644
 @@ -17,3 +17,3 @@ const reviewGuidanceLabel = localize( // intentionally not escaped because of it
  		comment: [
 -			'{Locked="<a href=\"https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
-+			'{Locked="<a href=\"https://github.com/VSCodium/vscodium/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
++			'{Locked="<a href=\"https://github.com/imaegoo/elephant/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
  			'{Locked="</a>"}'
 @@ -21,3 +21,3 @@ const reviewGuidanceLabel = localize( // intentionally not escaped because of it
  	},
 -	'Before you report an issue here please <a href="https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
-+	'Before you report an issue here please <a href="https://github.com/VSCodium/vscodium/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
++	'Before you report an issue here please <a href="https://github.com/imaegoo/elephant/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
  );
 diff --git a/src/vs/workbench/contrib/extensions/electron-sandbox/extensionsSlowActions.ts b/src/vs/workbench/contrib/extensions/electron-sandbox/extensionsSlowActions.ts
 index 20154ad..bca59b8 100644

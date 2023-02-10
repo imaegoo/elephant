@@ -2,6 +2,7 @@ vscode*
 VS*/*
 VSCode*
 VSCodium*
+elephant*
 .DS_Store
 *.env
 assets/

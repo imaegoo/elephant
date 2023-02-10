@@ -21,7 +21,7 @@ on:
     - '**/*.md'
 
 env:
-  APP_NAME: VSCodium
+  APP_NAME: Elephant
   ASSETS_REPOSITORY: ${{ github.repository }}-insiders
   GITHUB_BRANCH: insider
   OS_NAME: osx
