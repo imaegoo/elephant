@@ -134,17 +134,17 @@ setpath "product" "introductoryVideosUrl" "https://go.microsoft.com/fwlink/?link
 setpath "product" "keyboardShortcutsUrlLinux" "https://go.microsoft.com/fwlink/?linkid=832144"
 setpath "product" "keyboardShortcutsUrlMac" "https://go.microsoft.com/fwlink/?linkid=832143"
 setpath "product" "keyboardShortcutsUrlWin" "https://go.microsoft.com/fwlink/?linkid=832145"
-setpath "product" "licenseUrl" "https://github.com/VSCodium/vscodium/blob/master/LICENSE"
+setpath "product" "licenseUrl" "https://github.com/imaegoo/elephant/blob/master/LICENSE"
 setpath_json "product" "linkProtectionTrustedDomains" '["https://open-vsx.org"]'
 setpath "product" "releaseNotesUrl" "https://go.microsoft.com/fwlink/?LinkID=533483#vscode"
-setpath "product" "reportIssueUrl" "https://github.com/VSCodium/vscodium/issues/new"
+setpath "product" "reportIssueUrl" "https://github.com/imaegoo/elephant/issues/new"
 setpath "product" "requestFeatureUrl" "https://go.microsoft.com/fwlink/?LinkID=533482"
 setpath "product" "tipsAndTricksUrl" "https://go.microsoft.com/fwlink/?linkid=852118"
 setpath "product" "twitterUrl" "https://go.microsoft.com/fwlink/?LinkID=533687"
 
 if [[ "${DISABLE_UPDATE}" != "yes" ]]; then
   setpath "product" "updateUrl" "https://vscodium.now.sh"
-  setpath "product" "downloadUrl" "https://github.com/VSCodium/vscodium/releases"
+  setpath "product" "downloadUrl" "https://github.com/imaegoo/elephant/releases"
 fi
 
 if [[ "${VSCODE_QUALITY}" == "insider" ]]; then
@@ -231,20 +231,20 @@ if [[ "${OS_NAME}" == "linux" ]]; then
   # fix the packages metadata
   # code.appdata.xml
   sed -i 's|Visual Studio Code|VSCodium|g' resources/linux/code.appdata.xml
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/code.appdata.xml
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/code.appdata.xml
   sed -i 's|https://code.visualstudio.com/home/home-screenshot-linux-lg.png|https://vscodium.com/img/vscodium.png|' resources/linux/code.appdata.xml
   sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/code.appdata.xml
 
   # control.template
-  sed -i 's|Microsoft Corporation <vscode-linux@microsoft.com>|VSCodium Team https://github.com/VSCodium/vscodium/graphs/contributors|'  resources/linux/debian/control.template
+  sed -i 's|Microsoft Corporation <vscode-linux@microsoft.com>|VSCodium Team https://github.com/imaegoo/elephant/graphs/contributors|'  resources/linux/debian/control.template
   sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/debian/control.template
   sed -i 's|Visual Studio Code|VSCodium|g' resources/linux/debian/control.template
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/debian/control.template
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/debian/control.template
 
   # code.spec.template
-  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/VSCodium/vscodium#download-install|' resources/linux/rpm/code.spec.template
+  sed -i 's|https://code.visualstudio.com/docs/setup/linux|https://github.com/imaegoo/elephant#download-install|' resources/linux/rpm/code.spec.template
   sed -i 's|Microsoft Corporation|VSCodium Team|' resources/linux/rpm/code.spec.template
-  sed -i 's|Visual Studio Code Team <vscode-linux@microsoft.com>|VSCodium Team https://github.com/VSCodium/vscodium/graphs/contributors|' resources/linux/rpm/code.spec.template
+  sed -i 's|Visual Studio Code Team <vscode-linux@microsoft.com>|VSCodium Team https://github.com/imaegoo/elephant/graphs/contributors|' resources/linux/rpm/code.spec.template
   sed -i 's|https://code.visualstudio.com|https://vscodium.com|' resources/linux/rpm/code.spec.template
   sed -i 's|Visual Studio Code|VSCodium|' resources/linux/rpm/code.spec.template
 
