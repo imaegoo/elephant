@@ -18,37 +18,6 @@ sum_file() {
 mkdir -p assets
 
 if [[ "${OS_NAME}" == "osx" ]]; then
-  if [[ "${CI_BUILD}" != "no" ]]; then
-    cd "VSCode-darwin-${VSCODE_ARCH}"
-
-    CERTIFICATE_P12="${APP_NAME}.p12"
-    KEYCHAIN="${RUNNER_TEMP}/build.keychain"
-
-    echo "${CERTIFICATE_OSX_P12}" | base64 --decode > "${CERTIFICATE_P12}"
-
-    echo "+ create temporary keychain"
-    security create-keychain -p mysecretpassword "${KEYCHAIN}"
-    security set-keychain-settings -lut 21600 "${KEYCHAIN}"
-    security unlock-keychain -p mysecretpassword "${KEYCHAIN}"
-    security list-keychains -s "$(security list-keychains | xargs)" "${KEYCHAIN}"
-    # security list-keychains -d user
-    # security show-keychain-info ${KEYCHAIN}
-
-    echo "+ import certificate to keychain"
-    security import "${CERTIFICATE_P12}" -k "${KEYCHAIN}" -P "${CERTIFICATE_OSX_PASSWORD}" -T /usr/bin/codesign
-    security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k mysecretpassword "${KEYCHAIN}" > /dev/null
-    # security find-identity "${KEYCHAIN}"
-
-    echo "+ signing"
-    if [[ "${VSCODE_QUALITY}" == "insider" ]]; then
-      codesign --deep --force --verbose --sign "${CERTIFICATE_OSX_ID}" "${APP_NAME} - Insiders.app"
-    else
-      codesign --deep --force --verbose --sign "${CERTIFICATE_OSX_ID}" "${APP_NAME}.app"
-    fi
-
-    cd ..
-  fi
-
   if [[ "${SHOULD_BUILD_ZIP}" != "no" ]]; then
     echo "Building and moving ZIP"
     cd "VSCode-darwin-${VSCODE_ARCH}"

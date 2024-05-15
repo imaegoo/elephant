@@ -14,12 +14,12 @@ index 96ec5f7..5c091d9 100644
 @@ -18,3 +18,3 @@ const reviewGuidanceLabel = localize( // intentionally not escaped because of it
  		comment: [
 -			'{Locked="<a href=\"https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
-+			'{Locked="<a href=\"https://github.com/VSCodium/vscodium/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
++			'{Locked="<a href=\"https://github.com/imaegoo/elephant/wiki/Submitting-Bugs-and-Suggestions\" target=\"_blank\">"}',
  			'{Locked="</a>"}'
 @@ -22,3 +22,3 @@ const reviewGuidanceLabel = localize( // intentionally not escaped because of it
  	},
 -	'Before you report an issue here please <a href="https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
-+	'Before you report an issue here please <a href="https://github.com/VSCodium/vscodium/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
++	'Before you report an issue here please <a href="https://github.com/imaegoo/elephant/wiki/Submitting-Bugs-and-Suggestions" target="_blank">review the guidance we provide</a>.'
  );
 diff --git a/src/vs/code/electron-sandbox/issue/issueReporterService.ts b/src/vs/code/electron-sandbox/issue/issueReporterService.ts
 index d7f98f6..ed54042 100644
@@ -31,7 +31,7 @@ index d7f98f6..ed54042 100644
 +	private searchVSCodeIssues(title: string, _issueDescription?: string): void {
  		if (title) {
 -			this.searchDuplicates(title, issueDescription);
-+			this.searchGitHub('VSCodium/vscodium', title);
++			this.searchGitHub('imaegoo/elephant', title);
  		} else {
 @@ -611,33 +611,2 @@ export class IssueReporter extends Disposable {
  

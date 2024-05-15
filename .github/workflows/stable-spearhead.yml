@@ -12,16 +12,14 @@ on:
       dont_update:
         type: boolean
         description: Don't update VSCode
-  schedule:
-    - cron: '0 18 * * *'
 
 jobs:
   build:
     runs-on: macos-14
     env:
-      APP_NAME: VSCodium
+      APP_NAME: Elephant
       ASSETS_REPOSITORY: ${{ github.repository }}
-      VERSIONS_REPOSITORY: ${{ github.repository_owner }}/versions
+      VERSIONS_REPOSITORY: VSCodium/versions
       OS_NAME: osx
       VSCODE_ARCH: arm64
       VSCODE_LATEST: ${{ github.event.inputs.dont_update == 'true' && 'no' || 'yes' }}

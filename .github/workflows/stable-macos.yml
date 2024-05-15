@@ -14,20 +14,12 @@ on:
         description: Checkout PR
   repository_dispatch:
     types: [stable]
-  push:
-    branches: [ master ]
-    paths-ignore:
-    - '**/*.md'
-  pull_request:
-    branches: [ master ]
-    paths-ignore:
-    - '**/*.md'
 
 env:
-  APP_NAME: VSCodium
+  APP_NAME: Elephant
   ASSETS_REPOSITORY: ${{ github.repository }}
   OS_NAME: osx
-  VERSIONS_REPOSITORY: ${{ github.repository_owner }}/versions
+  VERSIONS_REPOSITORY: VSCodium/versions
   VSCODE_QUALITY: stable
 
 jobs:
@@ -42,8 +34,6 @@ jobs:
           - runner: macos-12
             vscode_arch: x64
           # - runner: macos-14
-          - runner: [self-hosted, macOS, ARM64]
-            vscode_arch: arm64
 
     steps:
       - uses: actions/checkout@v4
@@ -94,14 +84,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./release.sh
         if: env.SHOULD_BUILD == 'yes' && env.SHOULD_DEPLOY == 'yes'
-
-      - name: Update versions repo
-        env:
-          FORCE_UPDATE: ${{ github.event.inputs.force_version }}
-          GITHUB_TOKEN: ${{ secrets.STRONGER_GITHUB_TOKEN }}
-          GITHUB_USERNAME: ${{ github.repository_owner }}
-        run: ./update_version.sh
-        if: env.SHOULD_DEPLOY == 'yes'
 
       - name: Upload assets
         uses: actions/upload-artifact@v4
