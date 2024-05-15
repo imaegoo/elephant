@@ -1,11 +1,11 @@
 <div id="vscodium-logo" align="center">
     <br />
-    <img src="./src/stable/resources/linux/code.png" alt="VSCodium Logo" width="200"/>
+    <img src="./src/resources/linux/code.png" alt="VSCodium Logo" width="200"/>
     <h1>VSCodium</h1>
     <h3>Free/Libre Open Source Software Binaries of VS Code</h3>
 </div>
 
-Includes:
+<div id="badges" align="center">
 
 [![current release](https://img.shields.io/github/release/imaegoo/elephant.svg)](https://github.com/imaegoo/elephant/releases)
 [![license](https://img.shields.io/github/license/imaegoo/elephant.svg)](https://github.com/imaegoo/elephant/blob/master/LICENSE)
@@ -13,9 +13,9 @@ Includes:
 [![codium](https://snapcraft.io//codium/badge.svg)](https://snapcraft.io/codium)
 [![codium](https://snapcraft.io//codium/trending.svg?name=0)](https://snapcraft.io/codium)
 
-[![build status (linux)](https://img.shields.io/github/actions/workflow/status/imaegoo/elephant/stable-linux.yml?branch=master&label=build%28linux%29)](https://github.com/imaegoo/elephant/actions/workflows/stable-linux.yml?query=branch%3Amaster)
-[![build status (macos)](https://img.shields.io/github/actions/workflow/status/imaegoo/elephant/stable-macos.yml?branch=master&label=build%28macOS%29)](https://github.com/imaegoo/elephant/actions/workflows/stable-macos.yml?query=branch%3Amaster)
-[![build status (windows)](https://img.shields.io/github/actions/workflow/status/imaegoo/elephant/stable-windows.yml?branch=master&label=build%28windows%29)](https://github.com/imaegoo/elephant/actions/workflows/stable-windows.yml?query=branch%3Amaster)
+[![build status (linux)](https://img.shields.io/github/workflow/status/imaegoo/elephant/linux_build/master?label=build%28linux%29)](https://github.com/imaegoo/elephant/actions/workflows/linux.yml?query=branch%3Amaster)
+[![build status (macos)](https://img.shields.io/github/workflow/status/imaegoo/elephant/macos_build/master?label=build%28macos%29)](https://github.com/imaegoo/elephant/actions/workflows/macos.yml?query=branch%3Amaster)
+[![build status (windows)](https://img.shields.io/github/workflow/status/imaegoo/elephant/windows_build/master?label=build%28windows%29)](https://github.com/imaegoo/elephant/actions/workflows/windows.yml?query=branch%3Amaster)
 
 </div>
 
@@ -117,12 +117,13 @@ This repo exists so that you don't have to download+build from source. The build
 
 If you want to build from source yourself, head over to [Microsoft's vscode repo](https://github.com/Microsoft/vscode) and follow their [instructions](https://github.com/Microsoft/vscode/wiki/How-to-Contribute#build-and-run). This repo exists to make it easier to get the latest version of MIT-licensed VS Code.
 
-Microsoft's build process (which we are running to build the binaries) does download additional files. Those packages downloaded during build are:
+Microsoft's build process (which we are running to build the binaries) does download additional files. This was brought up in [Microsoft/vscode#141340](https://github.com/Microsoft/vscode/issues/141340) and [Microsoft/vscode#45978](https://github.com/Microsoft/vscode/issues/45978). These are the packages downloaded during build:
 
-- Pre-built extensions from the GitHub:
-  - [ms-vscode.js-debug-companion](https://github.com/microsoft/vscode-js-debug-companion)
-  - [ms-vscode.js-debug](https://github.com/microsoft/vscode-js-debug)
-  - [ms-vscode.vscode-js-profile-table](https://github.com/microsoft/vscode-js-profile-visualizer)
+- Extensions from the Microsoft Marketplace:
+  - [ms-vscode.references-view](https://marketplace.visualstudio.com/items?itemName=ms-vscode.references-view)
+  - [ms-vscode.js-debug-companion](https://marketplace.visualstudio.com/items?itemName=ms-vscode.js-debug-companion)
+  - [ms-vscode.js-debug](https://marketplace.visualstudio.com/items?itemName=ms-vscode.js-debug)
+  - [ms-vscode.vscode-js-profile-table](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-js-profile-table)
 - From [Electron releases](https://github.com/electron/electron/releases) (using [gulp-atom-electron](https://github.com/joaomoreno/gulp-atom-electron))
   - electron
   - ffmpeg
@@ -154,10 +155,9 @@ The minimal version is limited by the core component Electron, you may want to c
 - [x] GNU/Linux x86 (`deb`, `rpm`, `tar.gz`) ([up to v1.35.1](https://code.visualstudio.com/updates/v1_36#_linux-32bit-support-ends))
 - [x] GNU/Linux arm64 (`deb`, `tar.gz`)
 - [x] GNU/Linux armhf (`deb`, `tar.gz`)
-- [x] Windows 10 / Server 2012 R2 or newer x64
-- [x] Windows 10 / Server 2012 R2 or newer x86
-- [x] Windows 10 / Server 2012 R2 or newer arm64
-
+- [x] Windows 7 or newer x64
+- [x] Windows 7 or newer x86
+- [x] Windows 10 arm64
 
 ## <a id="donate"></a>Donate
 
@@ -167,8 +167,12 @@ Special thanks to:
 
 <table>
   <tr>
+    <td>@estatra</td>
+    <td>for the latest logo</td>
+  </tr>
+  <tr>
     <td><a href="https://github.com/jaredreich" target="_blank">@jaredreich</a></td>
-    <td>for the logo</td>
+    <td>for the previous logo</td>
   </tr>
   <tr>
     <td><a href="https://github.com/PalinuroSec" target="_blank">@PalinuroSec</a></td>

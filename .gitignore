@@ -2,6 +2,7 @@ vscode*
 VS*/*
 VSCode*
 VSCodium*
+elephant*
 .DS_Store
 *.env
 assets/
@@ -9,7 +10,7 @@ build/linux/appimage/out
 build/linux/appimage/pkg2appimage.AppDir
 build/linux/appimage/pkg2appimage-*.AppImage
 build/linux/appimage/squashfs-root
-build/linux/appimage/VSCodium
+build/linux/appimage/Elephant
 build/windows/msi/releasedir
 build/windows/msi/Files*.wxs
 build/windows/msi/Files*.wixobj

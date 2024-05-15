@@ -16,7 +16,7 @@ parts:
       set -eu
       ARCHITECTURE=$(dpkg --print-architecture)
       # Get GitHub releases
-      wget --quiet https://api.github.com/repos/VSCodium/vscodium-insiders/releases -O latest.json
+      wget --quiet https://api.github.com/repos/imaegoo/elephant-insiders/releases -O latest.json
       VERSION=$(jq -r 'sort_by(.tag_name)|last.tag_name' latest.json)
       DEB_URL=$(jq -r 'map(select(.tag_name == "'"$VERSION"'"))|first.assets[].browser_download_url|select(endswith("'"_$ARCHITECTURE.deb"'"))' latest.json)
       DEB=$(basename "${DEB_URL}")
@@ -29,9 +29,9 @@ parts:
       # Set version
       snapcraftctl set-version "$(echo "${VERSION}" | sed 's|\-insider||')"
       # Correct path to icon.
-      sed -i 's|Icon=vscodium-insiders|Icon=${SNAP}/usr/share/pixmaps/vscodium-insiders.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-insiders.desktop
+      sed -i 's|Icon=elephant-insiders|Icon=${SNAP}/usr/share/pixmaps/elephant-insiders.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-insiders.desktop
       sed -i 's|Exec=/usr/share/codium-insiders/codium-insiders|Exec=codium-insiders|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-insiders.desktop
-      sed -i 's|Icon=vscodium-insiders|Icon=${SNAP}/usr/share/pixmaps/vscodium-insiders.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-insiders-url-handler.desktop
+      sed -i 's|Icon=elephant-insiders|Icon=${SNAP}/usr/share/pixmaps/elephant-insiders.png|g' ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/codium-insiders-url-handler.desktop
     build-packages:
       - wget
       - jq

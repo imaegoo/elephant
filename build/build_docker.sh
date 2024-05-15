@@ -2,7 +2,7 @@
 
 exists() { type -t "$1" > /dev/null 2>&1; }
 
-export APP_NAME="VSCodium"
+export APP_NAME="Elephant"
 export CI_BUILD="no"
 export OS_NAME="linux"
 export SHOULD_BUILD="yes"
